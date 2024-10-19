@@ -1,8 +1,9 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, use_full_hex_values_for_flutter_colors
 
 import 'package:comites/Models/AprendizModel.dart';
 import 'package:comites/Models/ReglamentoModel.dart';
 import 'package:comites/Models/instructormodel.dart';
+import 'package:comites/constantsDesign.dart';
 import 'package:comites/pdf/generar_pdf.dart';
 import 'package:comites/source.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:comites/provider.dart'; // El archivo donde está AppState y la 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ProcesosRealizados extends StatefulWidget {
   const ProcesosRealizados({super.key});
@@ -64,7 +66,7 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return const Center(child: CircularProgressIndicator());
+        return const Center(child: SkeletonLoader());
       },
     );
 
@@ -435,434 +437,350 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
     );
   }
 
+  Widget _buildSkeletonLoader() {
+  return GridView.builder(
+    padding: const EdgeInsets.all(10.0),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 4, // Ajusta según tus necesidades
+      crossAxisSpacing: 10.0,
+      mainAxisSpacing: 10.0,
+      childAspectRatio: 1,
+    ),
+    itemCount: 8, // Número de skeletons que deseas mostrar
+    itemBuilder: (context, index) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SkeletonLoader(height: 20, width: 120), // Simula el título
+              SizedBox(height: 10),
+              SkeletonLoader(height: 15, width: 80), // Simula una línea de descripción
+              SizedBox(height: 10),
+              SkeletonLoader(height: 15, width: 100), // Simula otra línea de texto
+              SizedBox(height: 10),
+              SkeletonLoader(height: 15, width: 60), // Simula un dato adicional
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+
   Widget _buildSolicitudesList() {
-    return FutureBuilder<List<SolicitudModel>>(
-      future: futureSolicitudes,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No hay solicitudes disponibles'));
-        } else {
-          final solicitudes = snapshot.data!;
-          return _buildGrid(solicitudes);
-        }
-      },
-    );
-  }
+  return FutureBuilder<List<SolicitudModel>>(
+    future: futureSolicitudes,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        // Muestra el Skeleton Loader en lugar del SkeletonLoader
+        return _buildSkeletonLoader();
+      } else if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        return const Center(child: Text('No hay solicitudes disponibles'));
+      } else {
+        final solicitudes = snapshot.data!;
+        return _buildGrid(solicitudes);
+      }
+    },
+  );
+}
+
 
   Widget _buildGrid(List<SolicitudModel> solicitudes) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+  final screenWidth = MediaQuery.of(context).size.width;
+  final screenHeight = MediaQuery.of(context).size.height;
 
-    int crossAxisCount = 5;
-    double childAspectRatio = 1;
+  int crossAxisCount = 4;
+  double childAspectRatio = 1;
 
-    if (screenWidth < 600) {
-      crossAxisCount = 2;
-      childAspectRatio = screenWidth / (screenHeight / 1.5);
-    } else if (screenWidth >= 600 && screenWidth < 1200) {
-      crossAxisCount = 3;
-      childAspectRatio = screenWidth / (screenHeight);
-    } else if (screenWidth >= 1200 && screenWidth < 1900) {
-      crossAxisCount = 4;
-      childAspectRatio = screenWidth / (screenHeight * 1.5);
-    }
+  if (screenWidth < 600) {
+    crossAxisCount = 1;
+    childAspectRatio = screenWidth / (screenHeight / 2);
+  } else if (screenWidth >= 600 && screenWidth < 1200) {
+    crossAxisCount = 2;
+    childAspectRatio = screenWidth / (screenHeight);
+  } else if (screenWidth >= 1200 && screenWidth < 1900) {
+    crossAxisCount = 3;
+    childAspectRatio = screenWidth / (screenHeight * 1.5);
+  }
 
-    return GridView.builder(
-      padding: const EdgeInsets.all(10.0),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 10.0,
-        mainAxisSpacing: 10.0,
-        childAspectRatio: childAspectRatio,
-      ),
-      itemCount: solicitudes.length,
-      itemBuilder: (context, index) {
-        final solicitud = solicitudes[index];
+  return GridView.builder(
+    padding: const EdgeInsets.all(10.0),
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: crossAxisCount,
+      crossAxisSpacing: 10.0,
+      mainAxisSpacing: 10.0,
+      childAspectRatio: childAspectRatio,
+    ),
+    itemCount: solicitudes.length,
+    itemBuilder: (context, index) {
+      final solicitud = solicitudes[index];
 
-        return FutureBuilder<List<UsuarioAprendizModel>>(
-          future: Future.wait(
-              solicitud.aprendiz.map((id) => _getAprendizDetails(id))),
-          builder: (context, aprendizSnapshot) {
-            if (aprendizSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (aprendizSnapshot.hasError) {
-              return Center(child: Text('Error: ${aprendizSnapshot.error}'));
-            } else if (!aprendizSnapshot.hasData ||
-                aprendizSnapshot.data!.isEmpty) {
-              return const Center(child: Text('No hay aprendices disponibles'));
-            } else {
-              final aprendices = aprendizSnapshot.data!;
+      return FutureBuilder<List<UsuarioAprendizModel>>(
+        future: Future.wait(
+          solicitud.aprendiz.map((id) => _getAprendizDetails(id)),
+        ),
+        builder: (context, aprendizSnapshot) {
+          if (aprendizSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: SkeletonLoader());
+          } else if (aprendizSnapshot.hasError) {
+            return Center(child: Text('Error: ${aprendizSnapshot.error}'));
+          } else if (!aprendizSnapshot.hasData || aprendizSnapshot.data!.isEmpty) {
+            return const Center(child: Text('No hay aprendices disponibles'));
+          } else {
+            final aprendices = aprendizSnapshot.data!;
 
-              return FutureBuilder<List<ReglamentoModel>>(
-                  future: Future.wait(solicitud.reglamento
-                      .map((id) => _getReglamentoDetails(id))),
-                  builder: (context, reglamentoSnapshot) {
-                    if (reglamentoSnapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (reglamentoSnapshot.hasError) {
-                      return Center(
-                          child: Text('Error: ${reglamentoSnapshot.error}'));
-                    } else if (!reglamentoSnapshot.hasData ||
-                        reglamentoSnapshot.data!.isEmpty) {
-                      return const Center(
-                          child: Text('No hay reglamentos disponibles'));
-                    } else {
-                      final reglamentos = reglamentoSnapshot.data!;
-                      int academicosCount =
-                          reglamentos.where((r) => r.academico).length;
-                      int disciplinariosCount =
-                          reglamentos.where((r) => r.disciplinario).length;
+            return FutureBuilder<List<ReglamentoModel>>(
+              future: Future.wait(
+                solicitud.reglamento.map((id) => _getReglamentoDetails(id)),
+              ),
+              builder: (context, reglamentoSnapshot) {
+                if (reglamentoSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: SkeletonLoader());
+                } else if (reglamentoSnapshot.hasError) {
+                  return Center(child: Text('Error: ${reglamentoSnapshot.error}'));
+                } else if (!reglamentoSnapshot.hasData || reglamentoSnapshot.data!.isEmpty) {
+                  return const Center(child: Text('No hay reglamentos disponibles'));
+                } else {
+                  final reglamentos = reglamentoSnapshot.data!;
+                  int academicosCount = reglamentos.where((r) => r.academico).length;
+                  int disciplinariosCount = reglamentos.where((r) => r.disciplinario).length;
 
-                      // Estado para manejar el color de la tarjeta
-                      bool isHovered = false;
+                  bool isHovered = false;
 
-                      return StatefulBuilder(builder: (context, setState) {
-                        return MouseRegion(
-                            onEnter: (_) => setState(() => isHovered = true),
-                            onExit: (_) => setState(() => isHovered = false),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.green,
-                                  width: 2.0,
-                                ),
-                                borderRadius: BorderRadius.circular(12.0),
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      return MouseRegion(
+                        onEnter: (_) => setState(() => isHovered = true),
+                        onExit: (_) => setState(() => isHovered = false),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isHovered ? const Color(0xffe1f5fe) : const Color(0xFFFf0fee6),
+                            borderRadius: BorderRadius.circular(20.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                spreadRadius: 5,
+                                blurRadius: 10,
+                                offset: const Offset(0, 5), // Sombra inferior
                               ),
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                elevation: 8,
-                                shadowColor: Colors.grey.withOpacity(0.5),
-                                color: isHovered
-                                    ? Colors.green
-                                    : const Color(
-                                        0xFFFF6701), // Cambio de color
-                                child: InkWell(
-                                  onTap: () {
-                                    _showSolicitudDetails(solicitud);
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.8),
+                                spreadRadius: 5,
+                                blurRadius: 15,
+                                offset: const Offset(0, -5), // Sombra superior
+                              ),
+                            ],
+                          ),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            elevation: 0, 
+                            child: InkWell(
+                              onTap: () {
+                                _showSolicitudDetails(solicitud);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            // FECHA
+                                            _buildRow(
+                                              icon: Icons.calendar_today,
+                                              label: 'Fecha: ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
+                                              isHovered: isHovered,
+                                            ),
+                                            const SizedBox(height: 10),
+                                            // DESCRIPCIÓN
+                                            _buildRow(
+                                              icon: Icons.description,
+                                              label: 'Descripción: ${solicitud.descripcion}',
+                                              isHovered: isHovered,
+                                            ),
+                                            const SizedBox(height: 10),
+                                            // FICHA
+                                            _buildRow(
+                                              icon: Icons.numbers,
+                                              label: 'Ficha: ${aprendices.isNotEmpty ? aprendices[0].ficha : 'No disponible'}',
+                                              isHovered: isHovered,
+                                            ),
+                                            const SizedBox(height: 10),
+                                            // APRENDICES
+                                            _buildRow(
+                                              icon: Icons.people,
+                                              label: 'Aprendices: ${aprendices.length}',
+                                              isHovered: isHovered,
+                                            ),
+                                            const SizedBox(height: 10),
+                                            // REGLAMENTOS ACADÉMICOS
+                                            _buildRow(
+                                              icon: Icons.book,
+                                              label: 'Reglamentos Académicos: $academicosCount',
+                                              isHovered: isHovered,
+                                            ),
+                                            const SizedBox(height: 10),
+                                            // REGLAMENTOS DISCIPLINARIOS
+                                            _buildRow(
+                                              icon: Icons.book,
+                                              label: 'Reglamentos Disciplinarios: $disciplinariosCount',
+                                              isHovered: isHovered,
+                                            ),
+                                            const SizedBox(height: 20),
+                                            // INDICADORES DE ESTADO (BOOL)
+                                            Wrap(
+                                              spacing: 8,
+                                              runSpacing: 8,
                                               children: [
-                                                // FECHA
-                                                Row(
-                                                  children: [
-                                                    const Icon(
-                                                        Icons.calendar_today,
-                                                        color: Colors.green),
-                                                    const SizedBox(width: 8),
-                                                    Expanded(
-                                                      child: Text(
-                                                        'Fecha: ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
-                                                        style: const TextStyle(
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              255),
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 16,
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 10),
-
-                                                // DESCRIPCIÓN
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const Icon(
-                                                        Icons.description,
-                                                        color: Colors.blue),
-                                                    const SizedBox(width: 8),
-                                                    Expanded(
-                                                      child: Text(
-                                                        'Descripción: ${solicitud.descripcion}',
-                                                        style: const TextStyle(
-                                                          fontSize: 14,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              255),
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 2,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 10),
-
-                                                // FICHA
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const Icon(Icons.numbers),
-                                                    const SizedBox(width: 8),
-                                                    Text(
-                                                      'Ficha: ${aprendices.isNotEmpty ? aprendices[0].ficha : 'No disponible'}',
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        color: Color.fromARGB(
-                                                            255, 255, 255, 255),
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 2,
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 10),
-
-                                                // APRENDICES
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const Icon(Icons.people,
-                                                        color: Colors.grey),
-                                                    const SizedBox(width: 8),
-                                                    Text(
-                                                      'Aprendices: ${aprendices.length}',
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        color: Color.fromARGB(
-                                                            255, 255, 255, 255),
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 2,
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 10),
-
-                                                // REGLAMENTOS ACADÉMICOS
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const Icon(Icons.book,
-                                                        color: Color.fromARGB(
-                                                            255,
-                                                            165,
-                                                            117,
-                                                            101)),
-                                                    const SizedBox(width: 8),
-                                                    Expanded(
-                                                      child: Text(
-                                                        'Reglamentos Académicos: $academicosCount',
-                                                        style: const TextStyle(
-                                                          fontSize: 14,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              255),
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 2,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 10),
-
-                                                // REGLAMENTOS DISCIPLINARIOS
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const Icon(Icons.book,
-                                                        color: Color.fromARGB(
-                                                            255,
-                                                            165,
-                                                            117,
-                                                            101)),
-                                                    const SizedBox(width: 8),
-                                                    Expanded(
-                                                      child: Text(
-                                                        'Reglamentos Disciplinarios: $disciplinariosCount',
-                                                        style: const TextStyle(
-                                                          fontSize: 14,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              255),
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 2,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 20),
-
-                                                // INDICADORES DE ESTADO (BOOL)
-                                                Wrap(
-                                                  children: [
-                                                    _buildWorkFlow(
-                                                        solicitud
-                                                            .solicitudenviada,
-                                                        "",
-                                                        isModal: false),
-                                                    const SizedBox(width: 8),
-                                                    _buildWorkFlow(
-                                                        solicitud
-                                                            .citacionenviada,
-                                                        "",
-                                                        isModal: false),
-                                                    const SizedBox(width: 8),
-                                                    _buildWorkFlow(
-                                                        solicitud.comiteenviado,
-                                                        "",
-                                                        isModal: false),
-                                                    const SizedBox(width: 8),
-                                                    _buildWorkFlow(
-                                                        solicitud
-                                                            .planmejoramiento,
-                                                        "",
-                                                        isModal: false),
-                                                    const SizedBox(width: 8),
-                                                    _buildWorkFlow(
-                                                        solicitud
-                                                            .desicoordinador,
-                                                        "",
-                                                        isModal: false),
-                                                    const SizedBox(width: 8),
-                                                    _buildWorkFlow(
-                                                        solicitud.desiabogada,
-                                                        "",
-                                                        isModal: false),
-                                                    const SizedBox(width: 8),
-                                                    _buildWorkFlow(
-                                                        solicitud.finalizado,
-                                                        "",
-                                                        isModal: false),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 10),
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Flexible(
-                                                      child: TextButton(
-                                                        style: TextButton
-                                                            .styleFrom(
-                                                          backgroundColor: Colors
-                                                              .green, // Color de fondo del botón
-                                                          side: const BorderSide(
-                                                              color:
-                                                                  Colors.green,
-                                                              width:
-                                                                  2), // Borde
-                                                          padding: const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: 16.0,
-                                                              vertical:
-                                                                  8.0), // Padding interno
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        16.0), // Borde redondeado
-                                                          ),
-                                                        ),
-                                                        child: const Text(
-                                                            'WorkFlow',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white)),
-                                                        onPressed: () {
-                                                          showWorkFlowModal(
-                                                              context,
-                                                              solicitud);
-                                                        },
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                        width:
-                                                            10), // Separador entre los botones
-                                                    Flexible(
-                                                      child: TextButton(
-                                                        style: TextButton
-                                                            .styleFrom(
-                                                          backgroundColor: Colors
-                                                              .blue, // Color de fondo del botón
-                                                          side: const BorderSide(
-                                                              color:
-                                                                  Colors.blue,
-                                                              width:
-                                                                  2), // Borde
-                                                          padding: const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: 16.0,
-                                                              vertical:
-                                                                  8.0), // Padding interno
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        16.0), // Borde redondeado
-                                                          ),
-                                                        ),
-                                                        child: const Text('PDF',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white)),
-                                                        onPressed: () async {
-                                                          await _generatePdf(
-                                                              solicitud);
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )
+                                                _buildWorkFlow(solicitud.solicitudenviada, "", isModal: false),
+                                                _buildWorkFlow(solicitud.citacionenviada, "", isModal: false),
+                                                _buildWorkFlow(solicitud.comiteenviado, "", isModal: false),
+                                                _buildWorkFlow(solicitud.planmejoramiento, "", isModal: false),
+                                                _buildWorkFlow(solicitud.desicoordinador, "", isModal: false),
+                                                _buildWorkFlow(solicitud.desiabogada, "", isModal: false),
+                                                _buildWorkFlow(solicitud.finalizado, "", isModal: false),
                                               ],
                                             ),
-                                          ),
+                                            const SizedBox(height: 10),
+                                            // BOTONES
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: [
+                                                _buildButton(
+                                                  label: 'WorkFlow',
+                                                  color: Colors.green,
+                                                  onPressed: () {
+                                                    showWorkFlowModal(context, solicitud);
+                                                  },
+                                                ),
+                                                const SizedBox(width: 10),
+                                                _buildButton(
+                                                  label: 'PDF',
+                                                  color: Colors.blue,
+                                                  onPressed: () async {
+                                                    await _generatePdf(solicitud);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
-                            ));
-                      });
-                    }
-                  });
-            }
-          },
-        );
-      },
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            );
+          }
+        },
+      );
+    },
+  );
+}
+
+
+  Widget _buildRow({
+  required IconData icon,
+  required String label,
+  required bool isHovered,
+}) {
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Icon(icon, color: isHovered ? const Color.fromARGB(255, 17, 120, 255): const Color.fromARGB(255, 1, 187, 10)),
+      const SizedBox(width: 8),
+      Expanded(
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            color: isHovered ? primaryColor : textosOscuros, 
+          ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildButton({
+  required String label,
+  required Color color,
+  required VoidCallback onPressed,
+}) {
+  return Flexible(
+    child: TextButton(
+      style: TextButton.styleFrom(
+        backgroundColor: color,
+        side: BorderSide(color: color, width: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+      ),
+      onPressed: onPressed,
+      child: Text(label, style: const TextStyle(color: Colors.white)),
+    ),
+  );
+}
+
+}
+
+class SkeletonLoader extends StatelessWidget {
+  final double height;
+  final double width;
+  final BorderRadius borderRadius;
+
+  const SkeletonLoader({
+    super.key,
+    this.height = 20.0,
+    this.width = double.infinity,
+    this.borderRadius = const BorderRadius.all(Radius.circular(8.0)),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Container(
+        height: height,
+        width: width,
+        decoration: BoxDecoration(
+          color: Colors.grey,
+          borderRadius: borderRadius,
+        ),
+      ),
     );
   }
 }

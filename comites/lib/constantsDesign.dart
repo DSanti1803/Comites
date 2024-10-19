@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 // Definición de colores constantes utilizados en el tema de la aplicación.
 // Color principal de la aplicación.
-const primaryColor = Colors.green;
+const primaryColor = Color(0xFF4CAF50);
 // Color de fondo personalizado.
 const background1 = Color(0xFFFF2F0F2);
 // Color claro para botones.
@@ -19,6 +19,10 @@ const botonSombra = Color(0xFF32CD32);
 const secondaryColor = Color(0xFF000000);
 // Valor de padding por defecto.
 const defaultPadding = 16.0;
+
+const textosClaros = Color(0xffffffff);
+
+const textosOscuros = Color(0xfff0c1609);
 
 // Definición del tema de la aplicación claro.
 ThemeData lightTheme = ThemeData(
