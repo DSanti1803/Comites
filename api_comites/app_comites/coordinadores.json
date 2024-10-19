@@ -1,0 +1,46 @@
+[
+    {
+        "id": 1,
+        "nombres": "MANUEL",
+        "apellidos": "LUCERO",
+        "tipoDocumento": "TI",
+        "numeroDocumento": 1,
+        "correoElectronico": "quirogavargasd996@gmail.com",
+        "rol1": "COORDINADOR",
+        "coordinacion": "1",
+        "estado": true
+    },
+    {
+        "id": 2,
+        "nombres": "SANTIAGO",
+        "apellidos": "QUIROGA",
+        "tipoDocumento": "PAS",
+        "numeroDocumento": 2,
+        "correoElectronico": "quirogavargasd996@gmail.com",
+        "rol1": "COORDINADOR",
+        "coordinacion": "2",
+        "estado": true
+    },
+    {
+        "id": 3,
+        "nombres": "ORLANDO",
+        "apellidos": "CASTRO",
+        "tipoDocumento": "NIT",
+        "numeroDocumento": 3,
+        "correoElectronico": "quirogavargasd996@gmail.com",
+        "rol1": "COORDINADOR",
+        "coordinacion": "3",
+        "estado": true
+    },
+    {
+        "id": 4,
+        "nombres": "CRISTIANO",
+        "apellidos": "RONALDO",
+        "tipoDocumento": "TI",
+        "numeroDocumento": 4,
+        "correoElectronico": "quirogavargasd996@gmail.com",
+        "rol1": "COORDINADOR",
+        "coordinacion": "4",
+        "estado": true
+    }
+]

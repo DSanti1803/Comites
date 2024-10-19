@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "tiendacba-ckru",
+  "private_key_id": "bdb5f328af870fe5d6cddf9ea262b9da7564d330",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCUASt2l0Twgtb+\nz5oePgIc7wyW7zKp3osicL6aPxe8hMxm0lXUEq3zXqx9PqajPgV7kN5RzUcs7B9h\nkez2SwYn0uIkpDTMrPAy7hxbJjMbbMm3/9Gwpn7QOiXMx+jEiBmBB3tX+Gr81a5S\nEkGZYgmMch9Ugl8io7qx63HdO+MX7Y76TSng/ycIKreC3KdHxXDhs4PKC4jJvwlD\nljf9Tf14dieqUuqGK1OEa9PyroxZ8/OLwwB8CE+kJ4vkmACNa+6esyw56dP0gBGo\nYJZU24p6rLhatJXSw4ZbOrwn6SqtKKgwJ+orFBYD2QC3P79L581sMi8v+bAjiRr9\nUM7bQL43AgMBAAECggEAC3FntdyONPY4vyy34ryylyAYXhcSWLXfFgOXiP91y1qN\nHyoF/saO8nEQbwKICbkC3YHe3n47kYqUBowswQId8LhKScD0YBrC230zbgyvCODJ\nW9OIl9rXlSvZvlJ6ea94IVS9wZhwVSoEN044Ci7dRCGSsIr/5gK4rYbhn9RAg5n5\nP+TrIUct+jy5uKcz7bcLrtyNVzghATNVRj6CqzuznkiqsvLPza1DodnNfxxPZQ1A\nPyUiAds2ZvhiCHWN02uI7lZJDjDJGVxyRObX96UNesIe1CsUGfPjecY9w8cnGgGB\nWTDhGsUMyM0rHW1YHrYyNTpiSGzkdhKcS9sidwkgoQKBgQDMoM5CxTUP4cAYEIZs\nr6xq6eDw50lRcE4qHhzNym+fbVPp6GEwnYXu4vky5/zl/rvwWjwSz2FwicXr5sl2\nfafbPAeBs7xqMLgeXqLOR5Q2xb/W4cZ9s8nGv4vmOsoS59stoE2JgkDLeqbNKTva\nndAaCSlBApMPVG9lx5GRFrL+BwKBgQC5KTzeNOI6PhOF9sLsyvnHrYq4SMqXel1l\ndTXet7mx9oGHSbln1bJPtVT0W8sJkLCldAvyoFApNgc9OhoBmazrIAUSbQZlDwhi\nxlNJHQpwxFrj4gXGoDbCM6ugHkjUt/wEjjmMR07klolbluJRgPWm/L8XKT/IHh1g\nnGNS4LcyUQKBgH5biiKXDlYZS/pQMgHpVOnMNDfuSkr8s3e0korNR7JF23xkH6fa\njbre84zozjTj4P/haJkg8AWDPfGW2K7Plxh88BG6gE1+eiNewt/oOXC9GeJCFsTG\ngYG2BFiN0vxrqd95zodsJEDCI0ArByfPLZL2N0BKq67ar9NEsfHK94p/AoGAWdsF\nSuBnGNSfLNe/aKJn7NrvAtdwWWpsgJwM9HQ8jXyPB1RjwVwXGE9rVtplAdNRpjlW\nwvvBav5pLPFRRY2KOOBlFbgK7mgJLcYJDOYm9uqTIRvCqc1+RWhF1YJc3b4bcyqC\nCu1f/9Z9+hCS6/KlQ9BL+7Vs2nSi1QuPt9yNisECgYBfRtfB7cjAC0v3JWTQOFl5\njuc8M6ZncAuZWMXhY/dfULyf3UTsrx2EMro3/ywfW0hkALOJCDUzz0+FDm7LEAh8\nJjIDhN5D0tupBBK1SRuXfbMKXrF5ftmAB2dmdaJ7Est/vqkNY9f40GgyhSi7lhvj\nqV4v3b2GKNG+4qwClqd0ug==\n-----END PRIVATE KEY-----\n",
+  "client_email": "tiendacbabot@tiendacba-ckru.iam.gserviceaccount.com",
+  "client_id": "101713585492099709455",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/tiendacbabot%40tiendacba-ckru.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
