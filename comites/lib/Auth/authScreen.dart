@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen>
     // Inicializa el controlador de pestañas con una longitud de 2 pestañas y sincroniza el controlador
     // con el estado de la pantalla.
     tabController = TabController(
-      length: 2,
+      length: 1,
       vsync: this,
     );
 

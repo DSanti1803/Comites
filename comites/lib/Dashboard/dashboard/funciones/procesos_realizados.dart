@@ -441,12 +441,12 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
   return GridView.builder(
     padding: const EdgeInsets.all(10.0),
     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 4, // Ajusta según tus necesidades
+      crossAxisCount: 2, // cantidad de loaders
       crossAxisSpacing: 10.0,
       mainAxisSpacing: 10.0,
       childAspectRatio: 1,
     ),
-    itemCount: 8, // Número de skeletons que deseas mostrar
+    itemCount: 1, // Número de skeletons que deseas mostrar
     itemBuilder: (context, index) {
       return Container(
         decoration: BoxDecoration(
@@ -461,7 +461,7 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
           ],
         ),
         child: const Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(10.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -501,31 +501,17 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
 }
 
 
-  Widget _buildGrid(List<SolicitudModel> solicitudes) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final screenHeight = MediaQuery.of(context).size.height;
-
-  int crossAxisCount = 4;
-  double childAspectRatio = 1;
-
-  if (screenWidth < 600) {
-    crossAxisCount = 1;
-    childAspectRatio = screenWidth / (screenHeight / 2);
-  } else if (screenWidth >= 600 && screenWidth < 1200) {
-    crossAxisCount = 2;
-    childAspectRatio = screenWidth / (screenHeight);
-  } else if (screenWidth >= 1200 && screenWidth < 1900) {
-    crossAxisCount = 3;
-    childAspectRatio = screenWidth / (screenHeight * 1.5);
-  }
+ Widget _buildGrid(List<SolicitudModel> solicitudes) {
+  double maxCardWidth = 400; // Ancho máximo para cada tarjeta
+  double cardAspectRatio = 4 / 4; // Ajuste de la proporción de la tarjeta
 
   return GridView.builder(
     padding: const EdgeInsets.all(10.0),
-    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: crossAxisCount,
-      crossAxisSpacing: 10.0,
+    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+      maxCrossAxisExtent: maxCardWidth,
       mainAxisSpacing: 10.0,
-      childAspectRatio: childAspectRatio,
+      crossAxisSpacing: 10.0,
+      childAspectRatio: cardAspectRatio,
     ),
     itemCount: solicitudes.length,
     itemBuilder: (context, index) {
@@ -570,20 +556,26 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
                         onExit: (_) => setState(() => isHovered = false),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: isHovered ? const Color(0xffe1f5fe) : const Color(0xFFFf0fee6),
+                            color: isHovered
+                                ? const Color(0xffe1f5fe)
+                                : const Color(0xFFFf0fee6),
                             borderRadius: BorderRadius.circular(20.0),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 5,
-                                blurRadius: 10,
-                                offset: const Offset(0, 5), // Sombra inferior
+                                color: isHovered
+                                ? const Color(0xffe1f5fe)
+                                : const Color(0xff6de458),
+                                spreadRadius: 2,
+                                blurRadius: 1,
+                                offset: const Offset(0, 5),
                               ),
                               BoxShadow(
-                                color: Colors.white.withOpacity(0.8),
+                                color: isHovered
+                                    ? const Color(0xffe1f5fe).withOpacity(0.1)
+                                    : const Color(0xff6de458).withOpacity(0.1),
                                 spreadRadius: 5,
                                 blurRadius: 15,
-                                offset: const Offset(0, -5), // Sombra superior
+                                offset: const Offset(0, -5),
                               ),
                             ],
                           ),
@@ -591,102 +583,97 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
-                            elevation: 0, 
+                            elevation: 0,
                             child: InkWell(
-                              onTap: () {
-                                _showSolicitudDetails(solicitud);
-                              },
+                              onTap: () => _showSolicitudDetails(solicitud),
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Expanded(
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            // FECHA
-                                            _buildRow(
-                                              icon: Icons.calendar_today,
-                                              label: 'Fecha: ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
-                                              isHovered: isHovered,
-                                            ),
-                                            const SizedBox(height: 10),
-                                            // DESCRIPCIÓN
-                                            _buildRow(
-                                              icon: Icons.description,
-                                              label: 'Descripción: ${solicitud.descripcion}',
-                                              isHovered: isHovered,
-                                            ),
-                                            const SizedBox(height: 10),
-                                            // FICHA
-                                            _buildRow(
-                                              icon: Icons.numbers,
-                                              label: 'Ficha: ${aprendices.isNotEmpty ? aprendices[0].ficha : 'No disponible'}',
-                                              isHovered: isHovered,
-                                            ),
-                                            const SizedBox(height: 10),
-                                            // APRENDICES
-                                            _buildRow(
-                                              icon: Icons.people,
-                                              label: 'Aprendices: ${aprendices.length}',
-                                              isHovered: isHovered,
-                                            ),
-                                            const SizedBox(height: 10),
-                                            // REGLAMENTOS ACADÉMICOS
-                                            _buildRow(
-                                              icon: Icons.book,
-                                              label: 'Reglamentos Académicos: $academicosCount',
-                                              isHovered: isHovered,
-                                            ),
-                                            const SizedBox(height: 10),
-                                            // REGLAMENTOS DISCIPLINARIOS
-                                            _buildRow(
-                                              icon: Icons.book,
-                                              label: 'Reglamentos Disciplinarios: $disciplinariosCount',
-                                              isHovered: isHovered,
-                                            ),
-                                            const SizedBox(height: 20),
-                                            // INDICADORES DE ESTADO (BOOL)
-                                            Wrap(
-                                              spacing: 8,
-                                              runSpacing: 8,
-                                              children: [
-                                                _buildWorkFlow(solicitud.solicitudenviada, "", isModal: false),
-                                                _buildWorkFlow(solicitud.citacionenviada, "", isModal: false),
-                                                _buildWorkFlow(solicitud.comiteenviado, "", isModal: false),
-                                                _buildWorkFlow(solicitud.planmejoramiento, "", isModal: false),
-                                                _buildWorkFlow(solicitud.desicoordinador, "", isModal: false),
-                                                _buildWorkFlow(solicitud.desiabogada, "", isModal: false),
-                                                _buildWorkFlow(solicitud.finalizado, "", isModal: false),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 10),
-                                            // BOTONES
-                                            Row(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: [
-                                                _buildButton(
-                                                  label: 'WorkFlow',
-                                                  color: Colors.green,
-                                                  onPressed: () {
-                                                    showWorkFlowModal(context, solicitud);
-                                                  },
-                                                ),
-                                                const SizedBox(width: 10),
-                                                _buildButton(
-                                                  label: 'PDF',
-                                                  color: Colors.blue,
-                                                  onPressed: () async {
-                                                    await _generatePdf(solicitud);
-                                                  },
-                                                ),
-                                              ],
-                                            ),
-                                          ],
+                                    _buildRow(
+                                      icon: Icons.calendar_today,
+                                      label:
+                                          'Fecha: ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
+                                      isHovered: isHovered,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    _buildRow(
+                                      icon: Icons.numbers,
+                                      label:
+                                          'Ficha: ${aprendices.isNotEmpty ? aprendices[0].ficha : 'No disponible'}',
+                                      isHovered: isHovered,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    _buildRow(
+                                      icon: Icons.people,
+                                      label: 'Aprendices: ${aprendices.length}',
+                                      isHovered: isHovered,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    _buildRow(
+                                      icon: Icons.book,
+                                      label:
+                                          'Reglamentos Académicos: $academicosCount',
+                                      isHovered: isHovered,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    _buildRow(
+                                      icon: Icons.book,
+                                      label:
+                                          'Reglamentos Disciplinarios: $disciplinariosCount',
+                                      isHovered: isHovered,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 8,
+                                      children: [
+                                        _buildWorkFlow(
+                                            solicitud.solicitudenviada, "",
+                                            isModal: false),
+                                        _buildWorkFlow(
+                                            solicitud.citacionenviada, "",
+                                            isModal: false),
+                                        _buildWorkFlow(
+                                            solicitud.comiteenviado, "",
+                                            isModal: false),
+                                        _buildWorkFlow(
+                                            solicitud.planmejoramiento, "",
+                                            isModal: false),
+                                        _buildWorkFlow(
+                                            solicitud.desicoordinador, "",
+                                            isModal: false),
+                                        _buildWorkFlow(
+                                            solicitud.desiabogada, "",
+                                            isModal: false),
+                                        _buildWorkFlow(
+                                            solicitud.finalizado, "",
+                                            isModal: false),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        _buildButton(
+                                          label: 'WorkFlow',
+                                          color: Colors.green,
+                                          onPressed: () {
+                                            showWorkFlowModal(
+                                                context, solicitud);
+                                          },
                                         ),
-                                      ),
+                                        const SizedBox(width: 10),
+                                        _buildButton(
+                                          label: 'PDF',
+                                          color: Colors.blue,
+                                          onPressed: () async {
+                                            await _generatePdf(solicitud);
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -722,7 +709,7 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 17,
             color: isHovered ? primaryColor : textosOscuros, 
           ),
           overflow: TextOverflow.ellipsis,

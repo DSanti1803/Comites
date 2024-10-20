@@ -1,8 +1,10 @@
 import 'package:comites/Dashboard/main/components/appbar.dart';
 import 'package:comites/Dashboard/main/components/side_menu.dart';
 import 'package:comites/constantsDesign.dart';
+import 'package:comites/provider.dart';
 import 'package:comites/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MainBienvenida extends StatefulWidget {
   const MainBienvenida({super.key});
@@ -15,29 +17,34 @@ class _MainBienvenidaState extends State<MainBienvenida> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // Key para el Scaffold
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: CustomAppBar(
-        title: 'Bienvenido', // Título del AppBar
-        scaffoldKey: _scaffoldKey, // Controla la apertura del menú
-      ),
-      drawer: const SideMenu(), // Menú lateral
-      body: SafeArea(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (Responsive.isDesktop(context)) const Expanded(child: SideMenu()),
+Widget build(BuildContext context) {
+  final appState = Provider.of<AppState>(context);
 
-            const Expanded(
-              flex: 5,
-              child: BienvenidaContent(), // Contenido principal
-            ),
-          ],
-        ),
-      ),
-    );
+  if (appState.isLoading) {
+    return const Center(child: CircularProgressIndicator());  // Mostrar indicador de carga
   }
+
+  final nombreUsuario = appState.usuarioAutenticado?.nombres ?? 'Invitado';
+
+  return Scaffold(
+    key: _scaffoldKey,
+    appBar: CustomAppBar(
+      title: 'Bienvenido, $nombreUsuario',
+      scaffoldKey: _scaffoldKey,
+    ),
+    drawer: const SideMenu(),
+    body: SafeArea(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (Responsive.isDesktop(context)) const Expanded(child: SideMenu()),
+          const Expanded(flex: 5, child: BienvenidaContent()),
+        ],
+      ),
+    ),
+  );
+}
+
 }
 
 class BienvenidaContent extends StatelessWidget {
