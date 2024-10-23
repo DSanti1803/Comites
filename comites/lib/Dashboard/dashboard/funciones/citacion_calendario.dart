@@ -1,15 +1,14 @@
-// ignore_for_file: library_private_types_in_public_api, use_super_parameters
+// ignore_for_file: prefer_typing_uninitialized_variables, library_private_types_in_public_api
 
-import 'package:comites/constantsDesign.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:table_calendar/table_calendar.dart';
-import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:intl/date_symbol_data_local.dart';
 
 class CalendarioCitaciones extends StatefulWidget {
-  const CalendarioCitaciones({Key? key}) : super(key: key);
+  const CalendarioCitaciones({super.key});
 
   @override
   _CalendarioCitacionesState createState() => _CalendarioCitacionesState();
@@ -52,102 +51,142 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
     return _events[day] ?? [];
   }
 
- @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: SingleChildScrollView(
-      child: Column(
-        children: [
-          const Text(
-            'Calendario de Comités',
-            style: TextStyle(
-              color: primaryColor,
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const Text(
+              'Calendario de Comités',
+              style: TextStyle(
+                color: Colors.blue, // Cambia esto por tu color primario
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: 1200),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: TableCalendar(
-                    firstDay: DateTime.utc(2010, 10, 16),
-                    lastDay: DateTime.utc(2030, 3, 14),
-                    focusedDay: _focusedDay,
-                    calendarFormat: _calendarFormat,
-                    selectedDayPredicate: (day) {
-                      return isSameDay(_selectedDay, day);
-                    },
-                    onDaySelected: (selectedDay, focusedDay) {
-                      if (!isSameDay(_selectedDay, selectedDay)) {
-                        setState(() {
-                          _selectedDay = selectedDay;
-                          _focusedDay = focusedDay;
-                        });
-                      }
-                    },
-                    onFormatChanged: (format) {
-                      if (_calendarFormat != format) {
-                        setState(() {
-                          _calendarFormat = format;
-                        });
-                      }
-                    },
-                    onPageChanged: (focusedDay) {
-                      _focusedDay = focusedDay;
-                    },
-                    eventLoader: _getEventsForDay,
-                    locale: 'es_ES',
-                    headerStyle: const HeaderStyle(
-                      formatButtonVisible: false,
-                      titleCentered: true,
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    calendarStyle: const CalendarStyle(
-                      outsideDaysVisible: false,
+                    child: TableCalendar(
+                      firstDay: DateTime.utc(2010, 10, 16),
+                      lastDay: DateTime.utc(2030, 3, 14),
+                      focusedDay: _focusedDay,
+                      calendarFormat: _calendarFormat,
+                      selectedDayPredicate: (day) {
+                        return isSameDay(_selectedDay, day);
+                      },
+                      onDaySelected: (selectedDay, focusedDay) {
+                        if (!isSameDay(_selectedDay, selectedDay)) {
+                          setState(() {
+                            _selectedDay = selectedDay;
+                            _focusedDay = focusedDay;
+                          });
+                        }
+                      },
+                      onFormatChanged: (format) {
+                        if (_calendarFormat != format) {
+                          setState(() {
+                            _calendarFormat = format;
+                          });
+                        }
+                      },
+                      onPageChanged: (focusedDay) {
+                        _focusedDay = focusedDay;
+                      },
+                      locale: 'es_ES',
+                      headerStyle: const HeaderStyle(
+                        formatButtonVisible: false,
+                        titleCentered: true,
+                      ),
+                      calendarStyle: const CalendarStyle(
+                        outsideDaysVisible: false,
+                        // Asegúrate de que esto esté desactivado
+                        markersMaxCount: 0, // Esto desactiva los puntos de eventos
+                      ),
+                      // Agrega este builder para personalizar los días
+                      calendarBuilders: CalendarBuilders(
+                        defaultBuilder: (context, day, focusedDay) {
+                          final events = _getEventsForDay(day);
+                          return Container(
+                            margin: const EdgeInsets.all(4.0),
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '${day.day}',
+                                    style: TextStyle(
+                                      color: focusedDay == day ? Colors.blue : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  if (events.isNotEmpty)
+                                    Text(
+                                      '${events.length}', // Muestra el número de citaciones
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green, // Cambia el color según tu preferencia
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
+           Wrap(
+            alignment: WrapAlignment.start,
+            spacing: 10.0, // Espacio entre las tarjetas
+            runSpacing: 10.0, // Espacio entre las filas de tarjetas
+            children: _getEventsForDay(_selectedDay ?? _focusedDay)
+                .map((event) => CitacionTile(citacion: event))
+                .toList(),
           ),
-          ..._getEventsForDay(_selectedDay ?? _focusedDay)
-              .map((event) => CitacionTile(citacion: event)),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }
 
 class CitacionTile extends StatelessWidget {
   final Map<String, dynamic> citacion;
-  // ignore: prefer_typing_uninitialized_variables
   final maxWidth;
 
-  const CitacionTile(
-    {super.key,
-     required this.citacion,
-     this.maxWidth = 400,
-     });
+  const CitacionTile({
+    super.key,
+    required this.citacion,
+    this.maxWidth = 400,
+  });
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: maxWidth),
