@@ -106,61 +106,70 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
-                  _buildLargeWorkFlowStep(
+                  //Solicitud eniada
+                 _buildLargeWorkFlowStep(
                     context,
                     solicitud.solicitudenviada,
                     "Enviado",
                     solicitud.solicitudenviada
-                        ? "El estado 'Enviado' se ha completado exitosamente."
+                        ? "Fecha Solicitud: ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}\n"
+                          "Instructor/es: ${solicitud.responsable}\n"
+                          "Aprendices: ${solicitud.aprendiz.join(', ')}" 
                         : "El estado 'Enviado' aún no se ha completado.",
                   ),
+                  //Solicitud Citada
                   _buildLargeWorkFlowStep(
                     context,
                     solicitud.citacionenviada,
                     "Citado",
                     solicitud.citacionenviada
-                        ? "El estado 'Citado' se ha completado exitosamente."
-                        : "El estado 'Citado' aún no se ha completado.",
+                        ? "El comité ha sido citado para el dia: FECHA"
+                        : "Aún no se ha citado el comité",
                   ),
+                  //Comité
                   _buildLargeWorkFlowStep(
                     context,
                     solicitud.comiteenviado,
                     "Comité",
                     solicitud.comiteenviado
-                        ? "El estado 'Comité' se ha completado exitosamente."
-                        : "El estado 'Comité' aún no se ha completado.",
+                        ? "El comité se ha realizado exitosamente"
+                        : "El comité aun no se ha realizado",
                   ),
+                  //Plan Mejoramiento
                   _buildLargeWorkFlowStep(
                     context,
                     solicitud.planmejoramiento,
                     "Plan",
                     solicitud.planmejoramiento
-                        ? "El estado 'Plan de Mejoramiento' se ha completado exitosamente."
-                        : "El estado 'Plan de Mejoramiento' aún no se ha completado.",
+                        ? "El plan de mejoramiento ya fue calificado"
+                        : "El plan de mejoramiento no se ha enviado o no se ha calificado",
                   ),
+                  //Desición Coordinación
                   _buildLargeWorkFlowStep(
                     context,
                     solicitud.desicoordinador,
                     "Coordinador",
                     solicitud.desicoordinador
-                        ? "El estado 'Decisión del Coordinador' se ha completado exitosamente."
-                        : "El estado 'Decisión del Coordinador' aún no se ha completado.",
+                        ? "Coordinación tomo la siguiente desición: AAA"
+                        : "Coordinación no ha dado respuesta",
                   ),
+                  //Desición Abogada
                   _buildLargeWorkFlowStep(
                     context,
                     solicitud.desiabogada,
                     "Abogado",
                     solicitud.desiabogada
-                        ? "El estado 'Decisión del Abogado' se ha completado exitosamente."
-                        : "El estado 'Decisión del Abogado' aún no se ha completado.",
+                        ? "La abogada tomó la siguiente desición: AAA"
+                        : "La abogada no ha dado respuesta",
                   ),
+                  //Proceso Finalizado
                   _buildLargeWorkFlowStep(
                     context,
                     solicitud.finalizado,
                     "Finalizado",
                     solicitud.finalizado
-                        ? "El estado 'Finalizado' se ha completado exitosamente."
-                        : "El estado 'Finalizado' aún no se ha completado.",
+                        ? "El proceso finalizó"
+                        : "Aún no finaliza el proceso",
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -199,9 +208,7 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
   Widget _buildLargeWorkFlowStep(
       BuildContext context, bool status, String label, String description) {
     return GestureDetector(
-      onTap: () {
-        _showStepDetails(context, label, description);
-      },
+      onTap: () {},
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Row(
@@ -277,27 +284,6 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
           ],
         ),
       ),
-    );
-  }
-
-  void _showStepDetails(
-      BuildContext context, String label, String description) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(label),
-          content: Text(description),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cerrar'),
-            ),
-          ],
-        );
-      },
     );
   }
 
@@ -488,6 +474,8 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
         } else {
           final aprendices = aprendizSnapshot.data!;
 
+           final nombresAprendices = aprendices.map((a) => '${a.nombres} ${a.apellidos}').join(', ');
+
           return FutureBuilder<List<ReglamentoModel>>(
             future: Future.wait(
               solicitud.reglamento.map((id) => _getReglamentoDetails(id)),
@@ -501,100 +489,111 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
                 return const Center(child: Text('No hay reglamentos disponibles'));
               } else {
                 final reglamentos = reglamentoSnapshot.data!;
+                final reglamentoInfo = reglamentos.map((a) => '${a.capitulo} ${a.numeral}').join(', ');
                 int academicosCount = reglamentos.where((r) => r.academico).length;
                 int disciplinariosCount = reglamentos.where((r) => r.disciplinario).length;
 
                 return CardStyle.buildCard(
-                  onTap: () {
-                    // Acción al oprimir la tarjeta
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // FECHA
-                      _buildRow(
-                        icon: Icons.calendar_today,
-                        label: 'Fecha: ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}', 
-                        isHovered: false, // Ajusta según necesites
-                      ),
-                      const SizedBox(height: 10),
-                      // FICHA
-                      _buildRow(
-                        icon: Icons.numbers,
-                        label: 'Ficha: ${aprendices.isNotEmpty ? aprendices[0].ficha : 'No disponible'}',
-                        isHovered: false,
-                      ),
-                      const SizedBox(height: 10),
-                      // APRENDICES
-                      _buildRow(
-                        icon: Icons.people,
-                        label: 'Aprendices: ${aprendices.length}',
-                        isHovered: false,
-                      ),
-                      const SizedBox(height: 10),
-                      // REGLAMENTOS ACADÉMICOS
-                      _buildRow(
-                        icon: Icons.book,
-                        label: 'Reglamentos Académicos: $academicosCount',
-                        isHovered: false,
-                      ),
-                      const SizedBox(height: 10),
-                      // REGLAMENTOS DISCIPLINARIOS
-                      _buildRow(
-                        icon: Icons.book,
-                        label: 'Reglamentos Disciplinarios: $disciplinariosCount',
-                        isHovered: false,
-                      ),
-                      const SizedBox(height: 20),
-                      // INDICADORES DE ESTADO (BOOL)
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          _buildWorkFlow(
-                            [
-                              solicitud.solicitudenviada,
-                              solicitud.citacionenviada,
-                              solicitud.comiteenviado,
-                              solicitud.planmejoramiento,
-                              solicitud.desicoordinador,
-                              solicitud.desiabogada,
-                              solicitud.finalizado,
-                            ],
-                            [
-                              "", "", "", "", "", "", "",
-                            ],
-                            solicitud,
-                            isModal: false,
+                    onTap: () {
+                      // Acción al oprimir la tarjeta
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // FECHA
+                        _buildRow(
+                          icon: Icons.calendar_today,
+                          label: 'Fecha: ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
+                          isHovered: false,
+                        ),
+                        const SizedBox(height: 10),
+                        // FICHA
+                        _buildRow(
+                          icon: Icons.numbers,
+                          label: 'Ficha: ${aprendices.isNotEmpty ? aprendices[0].ficha : 'No disponible'}',
+                          isHovered: false,
+                        ),
+                        const SizedBox(height: 10),
+                        // APRENDICES
+                        Tooltip(
+                          message: nombresAprendices,
+                          child: _buildRow(
+                            icon: Icons.people,
+                            label: 'Aprendices: ${aprendices.length}',
+                            isHovered: false,
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      // BOTONES
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          const SizedBox(width: 10),
-                          _buildButton(
-                            label: 'PDF',
-                            color: Colors.blue,
-                            onPressed: () async {
-                              await _generatePdf(solicitud);
-                            },
+                        ),
+                        const SizedBox(height: 10),
+                        // REGLAMENTOS ACADÉMICOS
+                        Tooltip(
+                          message: reglamentoInfo,
+                          child: _buildRow(
+                            icon: Icons.book,
+                            label: 'Reglamentos Académicos: $academicosCount',
+                            isHovered: false,
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              }
-            },
-          );
-        }
-      },
-    );
-  },
-);
+                        ),
+                        const SizedBox(height: 10),
+                        // REGLAMENTOS DISCIPLINARIOS
+                        Tooltip(
+                          message: reglamentoInfo,
+                          child: _buildRow(
+                            
+                          icon: Icons.book,
+                          label: 'Reglamentos Disciplinarios: $disciplinariosCount',
+                          isHovered: false,
+                        ),
+                        ),
+                        const SizedBox(height: 20),
+                        // INDICADORES DE ESTADO (BOOL)
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            _buildWorkFlow(
+                              [
+                                solicitud.solicitudenviada,
+                                solicitud.citacionenviada,
+                                solicitud.comiteenviado,
+                                solicitud.planmejoramiento,
+                                solicitud.desicoordinador,
+                                solicitud.desiabogada,
+                                solicitud.finalizado,
+                              ],
+                              ["", "", "", "", "", "", ""],
+                              solicitud,
+                              isModal: false,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        // BOTONES
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(width: 10),
+                           _buildButton(
+                              label: 'Descargar Documento',
+                              icon: Icons.file_download, // Ícono de descarga
+                              color: Colors.blue,
+                              onPressed: () async {
+                                await _generatePdf(solicitud);
+                              },
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            );
+          }
+        },
+      );
+    },
+  );
 
 }
 
@@ -625,27 +624,36 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
 }
 
 Widget _buildButton({
-  required String label,
-  required Color color,
-  required VoidCallback onPressed,
-}) {
-  return AnimacionSobresaliente(
-    child: Flexible(
-      child: TextButton(
-        style: TextButton.styleFrom(
-          backgroundColor: color,
-          side: BorderSide(color: color, width: 2),
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return AnimacionSobresaliente(
+      scaleFactor: 1.09,
+      child: Flexible(
+        child: TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: color,
+            side: BorderSide(color: color, width: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+          ),
+          onPressed: onPressed,
+          child: Row(
+            mainAxisSize: MainAxisSize.min, // Ajusta el tamaño del Row al contenido
+            children: [
+              Icon(icon, color: Colors.white, size: 20), // Ícono
+              const SizedBox(width: 8), // Espacio entre el ícono y el texto
+              Text(label, style: const TextStyle(color: Colors.white)), // Texto
+            ],
           ),
         ),
-        onPressed: onPressed,
-        child: Text(label, style: const TextStyle(color: Colors.white)),
       ),
-    ),
-  );
-}
+    );
+  }
 
 }
 

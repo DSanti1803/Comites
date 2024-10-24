@@ -1,4 +1,5 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, non_constant_identifier_names
+import 'package:comites/Widgets/animacionSobresaliente.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -30,68 +31,79 @@ class _CitacionesFormState extends State<CitacionesForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Gestión de Citaciones'),
-        backgroundColor: Colors.teal,
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             _buildPendingSolicitudesList(),
             const SizedBox(height: 20),
-            _buildAutoScheduleButton(),
+            _AgendarAutoButton(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPendingSolicitudesList() {
-    return FutureBuilder<List<SolicitudModel>>(
-      future: futureSolicitudes,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData) {
-          solicitudes = snapshot.data!;
-          solicitudesPendientes =
-              solicitudes.where((s) => !s.citacionenviada).toList();
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: solicitudesPendientes.length,
-            itemBuilder: (context, index) {
-              return Card(
-                elevation: 3,
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                child: ListTile(
-                  title: Text(
-                    'Solicitud ${solicitudesPendientes[index].id}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: const Text('Pendiente de citación'),
-                  trailing:
-                      const Icon(Icons.pending_actions, color: Colors.teal),
-                ),
+Widget _buildPendingSolicitudesList() {
+  return FutureBuilder<List<SolicitudModel>>(
+    future: futureSolicitudes,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      } else if (snapshot.hasData) {
+        solicitudes = snapshot.data!;
+        solicitudesPendientes =
+            solicitudes.where((s) => !s.citacionenviada).toList();
+
+        // Usamos un Wrap para disposición horizontal y responsiva
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Wrap(
+                spacing: 10.0, // Espacio horizontal entre tarjetas
+                runSpacing: 10.0, // Espacio vertical entre filas
+                alignment: WrapAlignment.start,
+                children: solicitudesPendientes.map((solicitud) {
+                  return SizedBox(
+                    width: constraints.maxWidth > 600 ? 300 : constraints.maxWidth * 0.9,
+                    child: AnimacionSobresaliente(
+                      scaleFactor: 1.04,
+                      child: Card(
+                        elevation: 3,
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        child: ListTile(
+                          title: Text(
+                            'Solicitud ${solicitud.id}',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: const Text('Pendiente de citación'),
+                          trailing: const Icon(
+                            Icons.pending_actions,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
               );
             },
-          );
-        } else {
-          return const Text('No hay solicitudes pendientes');
-        }
-      },
-    );
-  }
+          ),
+        );
+      } else {
+        return const Text('No hay solicitudes pendientes');
+      }
+    },
+  );
+}
 
-  Widget _buildAutoScheduleButton() {
+  Widget _AgendarAutoButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.green,
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -101,10 +113,10 @@ class _CitacionesFormState extends State<CitacionesForm> {
         // Verificar si hay solicitudes pendientes
         if (solicitudesPendientes.isEmpty) {
           // Mostrar mensaje si no hay solicitudes pendientes
-          _showNoPendingSolicitudesDialog();
+          _SinSolicitudesPendientes();
         } else {
           // Continuar con el proceso normal si hay solicitudes
-          _showAutoScheduleDialog();
+          _ModalAgendar();
         }
       },
       child: const Text(
@@ -114,7 +126,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
     );
   }
 
-  void _showNoPendingSolicitudesDialog() {
+  void _SinSolicitudesPendientes() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -138,7 +150,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
     );
   }
 
-  void _showAutoScheduleDialog() async {
+  void _ModalAgendar() async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -170,7 +182,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
 
     _generateCitations(pickedDate, pickedStartTime, pickedEndTime);
 
-    _showCitationsSummary();
+    _ResumenCitaciones();
   }
 
   void _generateCitations(
@@ -211,7 +223,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
     });
   }
 
-  void _showCitationsSummary() {
+  void _ResumenCitaciones() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -263,7 +275,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
+                backgroundColor: Colors.green,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -547,7 +559,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
+                    backgroundColor: Colors.green,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

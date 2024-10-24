@@ -19,7 +19,7 @@ class _MainCalendarioState extends State<MainCalendario> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(
-        title: 'Citar Comités', // Título del AppBar
+        title: 'Calendario Comités', // Título del AppBar
         scaffoldKey: _scaffoldKey, // Pasa la key para abrir el menú
       ),
       drawer: const SideMenu(), // Drawer para el menú lateral

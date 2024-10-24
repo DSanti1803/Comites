@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, library_private_types_in_public_api
 
+import 'package:comites/Widgets/Cards.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
@@ -57,20 +58,12 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const Text(
-              'Calendario de Comités',
-              style: TextStyle(
-                color: Colors.blue, // Cambia esto por tu color primario
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1200),
+                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -117,10 +110,8 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
                       ),
                       calendarStyle: const CalendarStyle(
                         outsideDaysVisible: false,
-                        // Asegúrate de que esto esté desactivado
-                        markersMaxCount: 0, // Esto desactiva los puntos de eventos
+                        markersMaxCount: 0, // Desactiva los puntos de eventos
                       ),
-                      // Agrega este builder para personalizar los días
                       calendarBuilders: CalendarBuilders(
                         defaultBuilder: (context, day, focusedDay) {
                           final events = _getEventsForDay(day);
@@ -146,7 +137,7 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
                                       '${events.length}', // Muestra el número de citaciones
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.green, // Cambia el color según tu preferencia
+                                        color: Colors.green,
                                         fontSize: 14,
                                       ),
                                     ),
@@ -161,14 +152,21 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
                 ),
               ),
             ),
-           Wrap(
-            alignment: WrapAlignment.start,
-            spacing: 10.0, // Espacio entre las tarjetas
-            runSpacing: 10.0, // Espacio entre las filas de tarjetas
-            children: _getEventsForDay(_selectedDay ?? _focusedDay)
-                .map((event) => CitacionTile(citacion: event))
-                .toList(),
-          ),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: 10.0,
+                  runSpacing: 10.0,
+                  children: _getEventsForDay(_selectedDay ?? _focusedDay)
+                      .map((event) => Container(
+                            width: constraints.maxWidth > 600 ? 300 : constraints.maxWidth * 0.9, // Ajusta el ancho
+                            child: CitacionTile(citacion: event),
+                          ))
+                      .toList(),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -188,10 +186,10 @@ class CitacionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: maxWidth),
-      child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    return CardStyle2.buildCard(
+      onTap: () {},
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
         child: ListTile(
           title: Text('Citación #${citacion['id']}'),
           subtitle: Column(

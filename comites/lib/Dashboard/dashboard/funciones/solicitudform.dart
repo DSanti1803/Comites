@@ -186,7 +186,7 @@ class _SolicitudFormState extends State<SolicitudForm> {
         throw Exception('Error al cargar reglamentos: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error en _fetchReglamentos: $e');
+      print('Error en al cargar reglamentos: $e');
       // Manejar el error aquí, como mostrar un mensaje al usuario
     }
   }
