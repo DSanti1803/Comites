@@ -17,6 +17,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     final usuario = context.watch<AppState>().usuarioAutenticado.nombres;
 
     return AppBar(
+      centerTitle: true,
       automaticallyImplyLeading: false, // Evita la flecha de regreso
       backgroundColor: Colors.grey[200],
       title: Text(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:comites/Models/SolicitudModel.dart';
+import 'package:intl/intl.dart';
 
 class CitacionesForm extends StatefulWidget {
   const CitacionesForm({super.key});
@@ -76,10 +77,10 @@ Widget _buildPendingSolicitudesList() {
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         child: ListTile(
                           title: Text(
-                            'Solicitud ${solicitud.id}',
+                            'Acta | ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          subtitle: const Text('Pendiente de citación'),
+                          subtitle: const Text('Aprendices'),
                           trailing: const Icon(
                             Icons.pending_actions,
                             color: Colors.green,
@@ -479,7 +480,7 @@ Widget _buildPendingSolicitudesList() {
                   children: citacionesGeneradas.asMap().entries.map((entry) {
                     Map<String, dynamic> citacion = entry.value;
                     return ExpansionTile(
-                      title: Text('Solicitud ${citacion['solicitudId']}'),
+                      title: Text('Acta | ${citacion['solicitudId']}'),
                       subtitle: Text(
                           '${citacion['horaInicio']} - ${citacion['horaFin']}'),
                       children: [

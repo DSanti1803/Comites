@@ -628,7 +628,7 @@ class _SolicitudesCoordinacionState extends State<SolicitudesCoordinacion> {
 
 
   //Estilos de los Rows
-  Widget _buildRow({
+ Widget _buildRow({
   required IconData icon,
   required String label,
   required bool isHovered,
@@ -642,7 +642,7 @@ class _SolicitudesCoordinacionState extends State<SolicitudesCoordinacion> {
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 17,
             color: isHovered ? primaryColor : textosOscuros, 
           ),
           overflow: TextOverflow.ellipsis,
@@ -652,7 +652,6 @@ class _SolicitudesCoordinacionState extends State<SolicitudesCoordinacion> {
     ],
   );
 }
-  
   //Estilos de botones
   Widget _buildButton({
     required String label,

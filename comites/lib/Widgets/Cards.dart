@@ -85,7 +85,7 @@ class CardStyle2 {
                   BoxShadow(
                     color: isHovered
                         ? const Color(0xffe1f5fe).withOpacity(0.1)
-                        : const Color(0xff6de458).withOpacity(0.1),
+                        : const Color.fromARGB(255, 255, 202, 57).withOpacity(0.1),
                     spreadRadius: 5,
                     blurRadius: 15,
                     offset: const Offset(0, -5),

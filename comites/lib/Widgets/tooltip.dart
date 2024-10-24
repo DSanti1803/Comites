@@ -87,6 +87,7 @@ class _CustomTooltipState extends State<CustomTooltip>
                 ],
               ),
               child: Text(
+                maxLines: 1,
                 widget.message,
                 style: const TextStyle(
                   color: Colors.white,
