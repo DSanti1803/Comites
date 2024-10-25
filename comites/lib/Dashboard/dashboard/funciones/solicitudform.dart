@@ -236,7 +236,7 @@ class _SolicitudFormState extends State<SolicitudForm> {
       'aprendiz': selectedAprendicesIds,
       'fechasolicitud': DateTime.now().toIso8601String().split('T')[0],
       'descripcion': descripcion.text,
-      'responsable': [usuarioLogueado.id.toString(), usuariosSeleccionados],
+      'responsable': [usuarioLogueado.id.toString(), ...usuariosSeleccionados],
       'reglamento': selectedReglamentosIds,
       'observaciones': observaciones.text,
     });

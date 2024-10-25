@@ -77,7 +77,7 @@ class CardStyle2 {
                 borderRadius: BorderRadius.circular(20.0),
                 boxShadow: [
                   BoxShadow(
-                    color: isHovered ? const Color(0xffe1f5fe) : Color.fromARGB(255, 255, 195, 29),
+                    color: isHovered ? const Color(0xffe1f5fe) : const Color.fromARGB(255, 255, 195, 29),
                     spreadRadius: 1,
                     blurRadius: 1,
                     offset: const Offset(0, 5),

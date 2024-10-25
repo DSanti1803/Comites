@@ -1,9 +1,8 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, library_private_types_in_public_api
-
 import 'package:comites/Widgets/Cards.dart';
+import 'package:comites/Widgets/Expandible_Card.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/date_symbol_data_local.dart';
@@ -152,21 +151,22 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
                 ),
               ),
             ),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                return Wrap(
-                  alignment: WrapAlignment.start,
-                  spacing: 10.0,
-                  runSpacing: 10.0,
-                  children: _getEventsForDay(_selectedDay ?? _focusedDay)
-                      .map((event) => Container(
-                            width: constraints.maxWidth > 600 ? 300 : constraints.maxWidth * 0.9, // Ajusta el ancho
-                            child: CitacionTile(citacion: event),
-                          ))
-                      .toList(),
-                );
-              },
-            ),
+           LayoutBuilder(
+                builder: (context, constraints) {
+                  return Wrap(
+                    alignment: WrapAlignment.start,
+                    spacing: 10.0,
+                    runSpacing: 10.0,
+                    children: _getEventsForDay(_selectedDay ?? _focusedDay)
+                        .map((event) => SizedBox(
+                              width: constraints.maxWidth > 600 ? 300 : constraints.maxWidth * 0.9,
+                              child: CitacionTile(citacion: event),
+                            ))
+                        .toList(),
+                  );
+                },
+              ),
+
           ],
         ),
       ),
@@ -174,9 +174,10 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
   }
 }
 
+
 class CitacionTile extends StatelessWidget {
   final Map<String, dynamic> citacion;
-  final maxWidth;
+  final double maxWidth;
 
   const CitacionTile({
     super.key,
@@ -186,29 +187,32 @@ class CitacionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CardStyle2.buildCard(
-      onTap: () {},
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxWidth),
-        child: ListTile(
-          title: Text('Citación #${citacion['id']}'),
-          subtitle: Column(
+    return CardStyle.buildCard(
+      onTap: (){},
+      child: ExpandableCard.ExpandibleCard(
+        title: 'Hora Inicio | ${citacion['horainicio']}',
+        subtitle: _buildSubtitle(),
+        expandedContent: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text('Fecha: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(citacion['diacitacion']))}'),
-              Text('Hora: ${citacion['horacitacion']}'),
-              Text('Lugar: ${citacion['lugarcitacion']}'),
-              Text('Enlace: ${citacion['enlacecitacion']}'),
-              Text('Descripción: ${citacion['solicitud_data']['descripcion']}'),
+              Text('Hora Fin: ${citacion['horafin']}', style: const TextStyle(color: Colors.black),),
+              Text('Aprendices: ${citacion['solicitud_data']['aprendiz']}', style: const TextStyle(color: Colors.black)),
+              Text('Instructor: ${citacion['solicitud_data']['responsable']}', style: const TextStyle(color: Colors.black)),
+              Text('Descripción: ${citacion['solicitud_data']['descripcion']}', style: const TextStyle(color: Colors.black)),
             ],
           ),
-          isThreeLine: true,
-          onTap: () {
-            // Aquí puedes agregar una acción al tocar la citación, como mostrar más detalles
-          },
         ),
       ),
     );
   }
+   String _buildSubtitle() {
+    final lugar = citacion['lugarcitacion'];
+    final enlace = citacion['enlacecitacion'];
+
+    // Si el lugar es "No aplica", muestra el enlace; de lo contrario, muestra el lugar.
+    return lugar == 'No aplica' ? 'Enlace: $enlace' : 'Lugar: $lugar';
+  }
 }
+

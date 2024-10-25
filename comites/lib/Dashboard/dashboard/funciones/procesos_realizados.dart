@@ -428,76 +428,65 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
   );
 }
 
-
- Widget _buildGrid(List<SolicitudModel> solicitudes) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    //Valor inicial de Cards a mostrar
-    int crossAxisCount = 4;
-    double childAspectRatio = 1;
-
-   if (screenWidth < 600) {
-    crossAxisCount = 1;
-    childAspectRatio = screenWidth / (screenHeight / 2);
-  } else if (screenWidth >= 600 && screenWidth < 1200) {
-    crossAxisCount = 2;
-    childAspectRatio = screenWidth / (screenHeight);
-  } else if (screenWidth >= 1200 && screenWidth < 1900) {
-    crossAxisCount = 3;
-    childAspectRatio = screenWidth / (screenHeight * 1.5);
-  }
-
-   return GridView.builder(
-  padding: const EdgeInsets.all(20.0),
-  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: crossAxisCount,
-    crossAxisSpacing: 15.0,
-    mainAxisSpacing: 15.0,
-    childAspectRatio: childAspectRatio,
-  ),
-  itemCount: solicitudes.length,
-  itemBuilder: (context, index) {
-    final solicitud = solicitudes[index];
-
-    return FutureBuilder<List<UsuarioAprendizModel>>(
-      future: Future.wait(
-        solicitud.aprendiz.map((id) => _getAprendizDetails(id)),
-      ),
-      builder: (context, aprendizSnapshot) {
-        if (aprendizSnapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: SkeletonLoader());
-        } else if (aprendizSnapshot.hasError) {
-          return Center(child: Text('Error: ${aprendizSnapshot.error}'));
-        } else if (!aprendizSnapshot.hasData || aprendizSnapshot.data!.isEmpty) {
-          return const Center(child: Text('No hay aprendices disponibles'));
-        } else {
-          final aprendices = aprendizSnapshot.data!;
-
-           final nombresAprendices = aprendices.map((a) => '${a.nombres} ${a.apellidos}').join(', ');
-
-          return FutureBuilder<List<ReglamentoModel>>(
-            future: Future.wait(
-              solicitud.reglamento.map((id) => _getReglamentoDetails(id)),
+Widget _buildGrid(List<SolicitudModel> solicitudes) {
+  return SingleChildScrollView(
+    child: Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Wrap(
+        spacing: 15.0, // Espacio horizontal entre tarjetas
+        runSpacing: 15.0, // Espacio vertical entre tarjetas
+        alignment: WrapAlignment.center, // Centrar las tarjetas en cada fila
+        children: solicitudes.map((solicitud) {
+          return ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 400, // Tamaño máximo para cada tarjeta
             ),
-            builder: (context, reglamentoSnapshot) {
-              if (reglamentoSnapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: SkeletonLoader());
-              } else if (reglamentoSnapshot.hasError) {
-                return Center(child: Text('Error: ${reglamentoSnapshot.error}'));
-              } else if (!reglamentoSnapshot.hasData || reglamentoSnapshot.data!.isEmpty) {
-                return const Center(child: Text('No hay reglamentos disponibles'));
-              } else {
-                final reglamentos = reglamentoSnapshot.data!;
-                final reglamentoInfo = reglamentos.map((a) => '${a.capitulo} ${a.numeral}').join(', ');
-                int academicosCount = reglamentos.where((r) => r.academico).length;
-                int disciplinariosCount = reglamentos.where((r) => r.disciplinario).length;
+            child: FutureBuilder<List<UsuarioAprendizModel>>(
+              future: Future.wait(
+                solicitud.aprendiz.map((id) => _getAprendizDetails(id)),
+              ),
+              builder: (context, aprendizSnapshot) {
+                if (aprendizSnapshot.connectionState == ConnectionState.waiting) {
+                  return const SkeletonLoader();
+                } else if (aprendizSnapshot.hasError) {
+                  return Text('Error: ${aprendizSnapshot.error}');
+                } else if (!aprendizSnapshot.hasData || aprendizSnapshot.data!.isEmpty) {
+                  return const Text('No hay aprendices disponibles');
+                } else {
+                  final aprendices = aprendizSnapshot.data!;
+                  final nombresAprendices = aprendices
+                      .map((a) => '${a.nombres} ${a.apellidos}')
+                      .join(', ');
 
-                return CardStyle.buildCard(
-                    onTap: () {
-                      // Acción al oprimir la tarjeta
-                    },
-                    child: Column(
+                  return FutureBuilder<List<ReglamentoModel>>(
+                    future: Future.wait(
+                      solicitud.reglamento.map((id) => _getReglamentoDetails(id)),
+                    ),
+                    builder: (context, reglamentoSnapshot) {
+                      if (reglamentoSnapshot.connectionState == ConnectionState.waiting) {
+                        return const SkeletonLoader();
+                      } else if (reglamentoSnapshot.hasError) {
+                        return Text('Error: ${reglamentoSnapshot.error}');
+                      } else if (!reglamentoSnapshot.hasData || reglamentoSnapshot.data!.isEmpty) {
+                        return const Text('No hay reglamentos disponibles');
+                      } else {
+                        final reglamentos = reglamentoSnapshot.data!;
+                        final reglamentoInfo = reglamentos
+                            .map((a) => '${a.capitulo} ${a.numeral}')
+                            .join(', ');
+
+                        final academicosCount = reglamentos
+                            .where((r) => r.academico)
+                            .length;
+                        final disciplinariosCount = reglamentos
+                            .where((r) => r.disciplinario)
+                            .length;
+
+                        return CardStyle.buildCard(
+                          onTap: () {},
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // FECHA
@@ -583,18 +572,21 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
                             )
                           ],
                         ),
-                      ],
-                    ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    },
                   );
                 }
               },
-            );
-          }
-        },
-      );
-    },
+            ),
+          );
+        }).toList(),
+      ),
+    ),
   );
-
 }
 
 

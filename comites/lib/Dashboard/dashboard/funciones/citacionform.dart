@@ -1,10 +1,14 @@
 // ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, non_constant_identifier_names
+import 'package:comites/Models/AprendizModel.dart';
+import 'package:comites/Models/CoordinadorModel.dart';
 import 'package:comites/Widgets/animacionSobresaliente.dart';
+import 'package:comites/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:comites/Models/SolicitudModel.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class CitacionesForm extends StatefulWidget {
   const CitacionesForm({super.key});
@@ -22,11 +26,12 @@ class _CitacionesFormState extends State<CitacionesForm> {
   final TextEditingController _horaInicioController = TextEditingController();
   final TextEditingController _horaFinController = TextEditingController();
   List<Map<String, dynamic>> citacionesGeneradas = [];
-
+  String? coordinacionActual;
   @override
   void initState() {
     super.initState();
     futureSolicitudes = getSolicitud();
+    _loadCoordinacion();
   }
 
   @override
@@ -45,61 +50,109 @@ class _CitacionesFormState extends State<CitacionesForm> {
     );
   }
 
-Widget _buildPendingSolicitudesList() {
-  return FutureBuilder<List<SolicitudModel>>(
-    future: futureSolicitudes,
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      } else if (snapshot.hasError) {
-        return Text('Error: ${snapshot.error}');
-      } else if (snapshot.hasData) {
-        solicitudes = snapshot.data!;
-        solicitudesPendientes =
-            solicitudes.where((s) => !s.citacionenviada).toList();
+  Future<void> _loadCoordinacion() async {
+    final appState = Provider.of<AppState>(context, listen: false);
+    final userId = appState.userId;
 
-        // Usamos un Wrap para disposición horizontal y responsiva
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Wrap(
-                spacing: 10.0, // Espacio horizontal entre tarjetas
-                runSpacing: 10.0, // Espacio vertical entre filas
-                alignment: WrapAlignment.start,
-                children: solicitudesPendientes.map((solicitud) {
-                  return SizedBox(
-                    width: constraints.maxWidth > 600 ? 300 : constraints.maxWidth * 0.9,
-                    child: AnimacionSobresaliente(
-                      scaleFactor: 1.04,
-                      child: Card(
-                        elevation: 3,
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: ListTile(
-                          title: Text(
-                            'Acta | ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: const Text('Aprendices'),
-                          trailing: const Icon(
-                            Icons.pending_actions,
-                            color: Colors.green,
+    if (userId != null) {
+      // Obtener la coordinación del coordinador actual
+      final coordinador = await getCoordinador().then(
+          (coordinadores) => coordinadores.firstWhere((c) => c.id == userId));
+
+      setState(() {
+        coordinacionActual =
+            coordinador.coordinacion; // Guardar la coordinación actual
+      });
+    } else {
+      // Manejar el error de usuario no autenticado
+      setState(() {
+        coordinacionActual = null;
+      });
+    }
+  }
+
+  Widget _buildPendingSolicitudesList() {
+    return FutureBuilder<List<SolicitudModel>>(
+      future: futureSolicitudes,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData) {
+          solicitudes = snapshot.data!;
+
+          // Filtrar las solicitudes que tienen aprendices de la misma coordinación
+          final solicitudesPendientes = solicitudes.where((solicitud) {
+            // Comprobar si la solicitud tiene aprendices que coinciden con la coordinación actual
+            return solicitud.aprendiz.any((aprendizId) {
+              // Asegúrate de que aprendices no esté vacío
+              final aprendiz = aprendices.firstWhere(
+                (a) => a.id == aprendizId,
+                orElse: () => UsuarioAprendizModel(
+                    id: -1,
+                    nombres: '',
+                    apellidos: '',
+                    tipoDocumento: '',
+                    numeroDocumento: '',
+                    ficha: '',
+                    programa: '',
+                    correoElectronico: '',
+                    rol1: '',
+                    estado: true,
+                    coordinacion: ''), // Valor por defecto
+              );
+              // Asegúrate de que el aprendiz tenga una coordinacion válida
+              return aprendiz.coordinacion == coordinacionActual &&
+                  !solicitud.citacionenviada; // Filtrar por citacionenviada
+            });
+          }).toList();
+
+          // Usamos un Wrap para disposición horizontal y responsiva
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Wrap(
+                  spacing: 10.0, // Espacio horizontal entre tarjetas
+                  runSpacing: 10.0, // Espacio vertical entre filas
+                  alignment: WrapAlignment.start,
+                  children: solicitudesPendientes.map((solicitud) {
+                    return SizedBox(
+                      width: constraints.maxWidth > 600
+                          ? 300
+                          : constraints.maxWidth * 0.9,
+                      child: AnimacionSobresaliente(
+                        scaleFactor: 1.04,
+                        child: Card(
+                          elevation: 3,
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: ListTile(
+                            title: Text(
+                              'Acta | ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text('${solicitud.aprendiz}'),
+                            trailing: const Icon(
+                              Icons.pending_actions,
+                              color: Colors.green,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              );
-            },
-          ),
-        );
-      } else {
-        return const Text('No hay solicitudes pendientes');
-      }
-    },
-  );
-}
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          );
+        } else {
+          return const Text('No hay solicitudes pendientes');
+        }
+      },
+    );
+  }
 
   Widget _AgendarAutoButton() {
     return ElevatedButton(
@@ -337,8 +390,7 @@ Widget _buildPendingSolicitudesList() {
 
                     if (isOccupied) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text(
-                              'La hora de inicio ya está ocupada.')));
+                          content: Text('La hora de inicio ya está ocupada.')));
                     } else {
                       // Actualizar la hora de inicio y calcular la nueva hora de fin
                       citacion['horaInicio'] = newStartDateTime;
