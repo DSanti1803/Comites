@@ -1,8 +1,10 @@
 // ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, non_constant_identifier_names
 import 'package:comites/Models/AprendizModel.dart';
 import 'package:comites/Models/CoordinadorModel.dart';
+import 'package:comites/Models/instructormodel.dart';
 import 'package:comites/Widgets/animacionSobresaliente.dart';
 import 'package:comites/provider.dart';
+import 'package:comites/source.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -27,6 +29,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
   final TextEditingController _horaFinController = TextEditingController();
   List<Map<String, dynamic>> citacionesGeneradas = [];
   String? coordinacionActual;
+
   @override
   void initState() {
     super.initState();
@@ -71,6 +74,25 @@ class _CitacionesFormState extends State<CitacionesForm> {
     }
   }
 
+  Future<UsuarioAprendizModel> _getAprendizDetails(int id) async {
+    final response =
+        await http.get(Uri.parse('$sourceApi/api/UsuarioAprendiz/$id'));
+    if (response.statusCode == 200) {
+      return UsuarioAprendizModel.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load aprendiz details');
+    }
+  }
+
+  Future<InstructorModel> _getInstructorDetails(int id) async {
+    final response = await http.get(Uri.parse('$sourceApi/api/Instructor/$id'));
+    if (response.statusCode == 200) {
+      return InstructorModel.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load instructor details');
+    }
+  }
+
   Widget _buildPendingSolicitudesList() {
     return FutureBuilder<List<SolicitudModel>>(
       future: futureSolicitudes,
@@ -82,11 +104,8 @@ class _CitacionesFormState extends State<CitacionesForm> {
         } else if (snapshot.hasData) {
           solicitudes = snapshot.data!;
 
-          // Filtrar las solicitudes que tienen aprendices de la misma coordinación
-          final solicitudesPendientes = solicitudes.where((solicitud) {
-            // Comprobar si la solicitud tiene aprendices que coinciden con la coordinación actual
+          solicitudesPendientes = solicitudes.where((solicitud) {
             return solicitud.aprendiz.any((aprendizId) {
-              // Asegúrate de que aprendices no esté vacío
               final aprendiz = aprendices.firstWhere(
                 (a) => a.id == aprendizId,
                 orElse: () => UsuarioAprendizModel(
@@ -102,45 +121,92 @@ class _CitacionesFormState extends State<CitacionesForm> {
                     estado: true,
                     coordinacion: ''), // Valor por defecto
               );
-              // Asegúrate de que el aprendiz tenga una coordinacion válida
               return aprendiz.coordinacion == coordinacionActual &&
-                  !solicitud.citacionenviada; // Filtrar por citacionenviada
+                  !solicitud.citacionenviada;
             });
           }).toList();
 
-          // Usamos un Wrap para disposición horizontal y responsiva
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return Wrap(
-                  spacing: 10.0, // Espacio horizontal entre tarjetas
-                  runSpacing: 10.0, // Espacio vertical entre filas
+                  spacing: 10.0,
+                  runSpacing: 10.0,
                   alignment: WrapAlignment.start,
                   children: solicitudesPendientes.map((solicitud) {
-                    return SizedBox(
-                      width: constraints.maxWidth > 600
-                          ? 300
-                          : constraints.maxWidth * 0.9,
-                      child: AnimacionSobresaliente(
-                        scaleFactor: 1.04,
-                        child: Card(
-                          elevation: 3,
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          child: ListTile(
-                            title: Text(
-                              'Acta | ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                    // Llamadas Future para obtener todos los detalles de aprendices y responsables
+                    final aprendizFutures = solicitud.aprendiz
+                        .map((id) => _getAprendizDetails(id))
+                        .toList();
+                    final responsableFutures = solicitud.responsable
+                        .map((id) => _getInstructorDetails(id))
+                        .toList();
+
+                    return FutureBuilder(
+                      future: Future.wait(
+                          [...aprendizFutures, ...responsableFutures]),
+                      builder:
+                          (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else if (snapshot.hasData) {
+                          // Separar los detalles de aprendices y responsables
+                          final aprendicesDetails = snapshot.data!
+                              .sublist(0, solicitud.aprendiz.length)
+                              .cast<UsuarioAprendizModel>();
+                          final responsablesDetails = snapshot.data!
+                              .sublist(solicitud.aprendiz.length)
+                              .cast<InstructorModel>();
+
+                          return SizedBox(
+                            width: constraints.maxWidth > 600
+                                ? 300
+                                : constraints.maxWidth * 0.9,
+                            child: AnimacionSobresaliente(
+                              scaleFactor: 1.04,
+                              child: Card(
+                                elevation: 3,
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                child: ListTile(
+                                  title: Text(
+                                    'Acta | ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('Aprendices:'),
+                                      ...aprendicesDetails
+                                          .map((aprendiz) => Text(
+                                                '${aprendiz.nombres} ${aprendiz.apellidos}',
+                                              )),
+                                      const SizedBox(height: 8),
+                                      const Text('Responsables:'),
+                                      ...responsablesDetails
+                                          .map((responsable) => Text(
+                                                '${responsable.nombres} ${responsable.apellidos}',
+                                              )),
+                                    ],
+                                  ),
+                                  trailing: const Icon(
+                                    Icons.pending_actions,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              ),
                             ),
-                            subtitle: Text('${solicitud.aprendiz}'),
-                            trailing: const Icon(
-                              Icons.pending_actions,
-                              color: Colors.green,
-                            ),
-                          ),
-                        ),
-                      ),
+                          );
+                        } else {
+                          return const Text('Cargando datos...');
+                        }
+                      },
                     );
                   }).toList(),
                 );
@@ -281,213 +347,152 @@ class _CitacionesFormState extends State<CitacionesForm> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          title: const Text(
-            'Resumen de Citaciones',
-            textAlign: TextAlign.center,
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              children: citacionesGeneradas.asMap().entries.map((entry) {
-                int index = entry.key;
-                Map<String, dynamic> citacion = entry.value;
-                return Card(
-                  elevation: 2,
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  child: ListTile(
-                    title: Text('Solicitud ${citacion['solicitudId']}'),
-                    subtitle: Text(
-                        '${citacion['horaInicio']} - ${citacion['horaFin']}'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.blue),
-                          onPressed: () => _editCitation(index, citacion),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              title: const Text(
+                'Resumen de Citaciones',
+                textAlign: TextAlign.center,
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: citacionesGeneradas.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    Map<String, dynamic> citacion = entry.value;
+                    return Card(
+                      elevation: 2,
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      child: ListTile(
+                        title: Text('Solicitud ${citacion['solicitudId']}'),
+                        subtitle: Text(
+                            '${citacion['horaInicio']} - ${citacion['horaFin']}'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () =>
+                                  _editCitation(index, citacion, setModalState),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                // Llama a la función de eliminación y actualiza el estado
+                                _deleteCitation(index, setModalState);
+                              },
+                            ),
+                          ],
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            // Llama a la función de eliminación y actualiza el estado
-                            _deleteCitation(index);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _showCitationDetailsForm();
-              },
-              child: const Text('Confirmar'),
-            ),
-          ],
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _showCitationDetailsForm();
+                  },
+                  child: const Text('Confirmar'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  void _editCitation(int index, Map<String, dynamic> citacion) {
-    TimeOfDay selectedStartTime =
-        TimeOfDay.fromDateTime(citacion['horaInicio']);
+  void _editCitation(int index, Map<String, dynamic> citacion,
+      StateSetter setModalState) async {
+    DateTime currentStartTime = _parseTime(citacion['horaInicio']);
+    DateTime currentEndTime = _parseTime(citacion['horaFin']);
 
-    showDialog(
+    // Selección de la nueva hora de inicio
+    TimeOfDay? newStartTime = await showTimePicker(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Editar Citación'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                  'Hora de inicio actual: ${citacion['horaInicio'].toString()}'),
-              ElevatedButton(
-                onPressed: () async {
-                  TimeOfDay? newStartTime = await showTimePicker(
-                    context: context,
-                    initialTime: selectedStartTime,
-                  );
-
-                  if (newStartTime != null) {
-                    DateTime newStartDateTime = DateTime(
-                      citacion['horaInicio'].year,
-                      citacion['horaInicio'].month,
-                      citacion['horaInicio'].day,
-                      newStartTime.hour,
-                      newStartTime.minute,
-                    );
-
-                    // Comprobar si la nueva hora de inicio ya está ocupada
-                    bool isOccupied = false;
-                    for (var citation in citacionesGeneradas) {
-                      DateTime citationStart = citation['horaInicio'];
-                      DateTime citationEnd = citation['horaFin'];
-                      if (newStartDateTime.isAfter(citationStart) &&
-                          newStartDateTime.isBefore(citationEnd)) {
-                        isOccupied = true;
-                        break;
-                      }
-                    }
-
-                    if (isOccupied) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('La hora de inicio ya está ocupada.')));
-                    } else {
-                      // Actualizar la hora de inicio y calcular la nueva hora de fin
-                      citacion['horaInicio'] = newStartDateTime;
-                      citacion['horaFin'] =
-                          newStartDateTime.add(const Duration(minutes: 20));
-
-                      // Actualizar la siguiente citación
-                      if (index < citacionesGeneradas.length - 1) {
-                        var nextCitation = citacionesGeneradas[index + 1];
-                        nextCitation['horaInicio'] = citacion['horaFin'];
-                        nextCitation['horaFin'] = nextCitation['horaInicio']
-                            .add(const Duration(minutes: 20));
-                      }
-
-                      // Actualizar el estado
-                      setState(() {});
-                      Navigator.of(context).pop();
-                    }
-                  }
-                },
-                child: const Text('Seleccionar Nueva Hora de Inicio'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
-            ),
-          ],
-        );
-      },
+      initialTime: TimeOfDay.fromDateTime(currentStartTime),
     );
-  }
 
-  void _deleteCitation(int index) {
-    if (index < 0 || index >= citacionesGeneradas.length) {
-      return; // Evitar acceder a un índice fuera de rango
+    if (newStartTime == null) return;
+
+    // Selección de la nueva hora de fin
+    TimeOfDay? newEndTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(currentEndTime),
+    );
+
+    if (newEndTime == null) return;
+
+    // Actualizar la hora de la citación seleccionada
+    DateTime newStartDateTime = DateTime(
+      currentStartTime.year,
+      currentStartTime.month,
+      currentStartTime.day,
+      newStartTime.hour,
+      newStartTime.minute,
+    );
+
+    DateTime newEndDateTime = DateTime(
+      currentEndTime.year,
+      currentEndTime.month,
+      currentEndTime.day,
+      newEndTime.hour,
+      newEndTime.minute,
+    );
+
+    // Actualizar los datos de la citación editada
+    setModalState(() {
+      citacion['horaInicio'] =
+          '${newStartDateTime.hour.toString().padLeft(2, '0')}:${newStartDateTime.minute.toString().padLeft(2, '0')}';
+      citacion['horaFin'] =
+          '${newEndDateTime.hour.toString().padLeft(2, '0')}:${newEndDateTime.minute.toString().padLeft(2, '0')}';
+    });
+
+    // Actualizar las citaciones posteriores
+    for (var i = index + 1; i < citacionesGeneradas.length; i++) {
+      DateTime prevEndTime = _parseTime(citacionesGeneradas[i - 1]['horaFin']);
+      citacionesGeneradas[i]['horaInicio'] =
+          '${prevEndTime.hour.toString().padLeft(2, '0')}:${prevEndTime.minute.toString().padLeft(2, '0')}';
+      citacionesGeneradas[i]['horaFin'] =
+          '${prevEndTime.add(const Duration(minutes: 20)).hour.toString().padLeft(2, '0')}:${prevEndTime.add(const Duration(minutes: 20)).minute.toString().padLeft(2, '0')}';
     }
+  }
 
-    // Mostrar un mensaje de confirmación antes de eliminar
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirmar eliminación'),
-          content:
-              const Text('¿Estás seguro de que deseas eliminar esta citación?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .pop(); // Cerrar el diálogo de confirmación
-              },
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Eliminar la citación
-                citacionesGeneradas.removeAt(index);
+// Función para eliminar una citación seleccionada
+  void _deleteCitation(int index, StateSetter setModalState) {
+    setModalState(() {
+      citacionesGeneradas.removeAt(index);
+    });
 
-                // Actualizar las horas de las citas restantes
-                for (int i = index; i < citacionesGeneradas.length; i++) {
-                  if (i > 0) {
-                    var previousCitation = citacionesGeneradas[i - 1];
-                    // Asegúrate de que 'horaFin' sea un DateTime antes de acceder
-                    if (previousCitation['horaFin'] is DateTime) {
-                      citacionesGeneradas[i]['horaInicio'] =
-                          previousCitation['horaFin'];
-                      // Asegúrate de que 'horaInicio' no sea nulo antes de agregar duración
-                      if (citacionesGeneradas[i]['horaInicio'] != null) {
-                        citacionesGeneradas[i]['horaFin'] =
-                            citacionesGeneradas[i]['horaInicio']
-                                .add(const Duration(minutes: 20));
-                      }
-                    }
-                  } else {
-                    // Para la primera cita, solo ajustamos la hora de fin
-                    if (citacionesGeneradas[i]['horaInicio'] is DateTime) {
-                      citacionesGeneradas[i]['horaFin'] = citacionesGeneradas[i]
-                              ['horaInicio']
-                          .add(const Duration(minutes: 20));
-                    }
-                  }
-                }
+    // Recalcular las horas de las citaciones después de la eliminación
+    for (var i = index; i < citacionesGeneradas.length; i++) {
+      DateTime prevEndTime = _parseTime(citacionesGeneradas[i - 1]['horaFin']);
+      citacionesGeneradas[i]['horaInicio'] =
+          '${prevEndTime.hour.toString().padLeft(2, '0')}:${prevEndTime.minute.toString().padLeft(2, '0')}';
+      citacionesGeneradas[i]['horaFin'] =
+          '${prevEndTime.add(const Duration(minutes: 20)).hour.toString().padLeft(2, '0')}:${prevEndTime.add(const Duration(minutes: 20)).minute.toString().padLeft(2, '0')}';
+    }
+  }
 
-                // Actualizar el estado
-                setState(() {});
-                Navigator.of(context)
-                    .pop(); // Cerrar el diálogo de confirmación
-              },
-              child: const Text('Eliminar'),
-            ),
-          ],
-        );
-      },
-    );
+// Función para parsear las horas
+  DateTime _parseTime(String time) {
+    final parts = time.split(':');
+    return DateTime(0, 1, 1, int.parse(parts[0]), int.parse(parts[1]));
   }
 
   void _showIncompleteFieldsDialog() {

@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, library_private_types_in_public_api
+import 'package:comites/Models/AprendizModel.dart';
+import 'package:comites/Models/instructormodel.dart';
 import 'package:comites/Widgets/Cards.dart';
 import 'package:comites/Widgets/Expandible_Card.dart';
+import 'package:comites/source.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'dart:convert';
@@ -31,17 +34,44 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
   }
 
   Future<void> _fetchCitaciones() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/Citacion/'));
+    final response =
+        await http.get(Uri.parse('http://127.0.0.1:8000/api/Citacion/'));
     if (response.statusCode == 200) {
       final List<dynamic> citaciones = json.decode(response.body);
       setState(() {
         _events = {};
-        for (var citacion in citaciones) {
-          final fecha = DateTime.parse(citacion['diacitacion']);
-          if (_events[fecha] == null) _events[fecha] = [];
-          _events[fecha]!.add(citacion);
-        }
       });
+
+      for (var citacion in citaciones) {
+        final fecha = DateTime.parse(citacion['diacitacion']);
+        if (_events[fecha] == null) _events[fecha] = [];
+
+        // Asegúrate de que `aprendiz` y `responsable` sean int extrayendo el primer elemento de la lista
+        final aprendizIds =
+            citacion['solicitud_data']['aprendiz'] as List<dynamic>;
+        final responsableIds =
+            citacion['solicitud_data']['responsable'] as List<dynamic>;
+
+        if (aprendizIds.isNotEmpty && responsableIds.isNotEmpty) {
+          final aprendizId = aprendizIds[0];
+          final responsableId = responsableIds[0];
+
+          try {
+            final aprendiz = await _getAprendizDetails(aprendizId);
+            final responsable = await _getInstructorDetails(responsableId);
+
+            setState(() {
+              citacion['solicitud_data']['aprendiz'] =
+                  '${aprendiz.nombres} ${aprendiz.apellidos}';
+              citacion['solicitud_data']['responsable'] =
+                  '${responsable.nombres} ${responsable.apellidos}';
+              _events[fecha]!.add(citacion);
+            });
+          } catch (e) {
+            print('Error loading details for aprendiz or instructor: $e');
+          }
+        }
+      }
     } else {
       print('Failed to load citaciones');
     }
@@ -62,7 +92,8 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
               padding: const EdgeInsets.all(16.0),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                  constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.9),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -127,7 +158,9 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
                                   Text(
                                     '${day.day}',
                                     style: TextStyle(
-                                      color: focusedDay == day ? Colors.blue : Colors.black,
+                                      color: focusedDay == day
+                                          ? Colors.blue
+                                          : Colors.black,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -151,22 +184,23 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
                 ),
               ),
             ),
-           LayoutBuilder(
-                builder: (context, constraints) {
-                  return Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: 10.0,
-                    runSpacing: 10.0,
-                    children: _getEventsForDay(_selectedDay ?? _focusedDay)
-                        .map((event) => SizedBox(
-                              width: constraints.maxWidth > 600 ? 300 : constraints.maxWidth * 0.9,
-                              child: CitacionTile(citacion: event),
-                            ))
-                        .toList(),
-                  );
-                },
-              ),
-
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: 10.0,
+                  runSpacing: 10.0,
+                  children: _getEventsForDay(_selectedDay ?? _focusedDay)
+                      .map((event) => SizedBox(
+                            width: constraints.maxWidth > 600
+                                ? 300
+                                : constraints.maxWidth * 0.9,
+                            child: CitacionTile(citacion: event),
+                          ))
+                      .toList(),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -174,6 +208,24 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
   }
 }
 
+Future<UsuarioAprendizModel> _getAprendizDetails(int id) async {
+  final response =
+      await http.get(Uri.parse('$sourceApi/api/UsuarioAprendiz/$id'));
+  if (response.statusCode == 200) {
+    return UsuarioAprendizModel.fromJson(json.decode(response.body));
+  } else {
+    throw Exception('Failed to load aprendiz details');
+  }
+}
+
+Future<InstructorModel> _getInstructorDetails(int id) async {
+  final response = await http.get(Uri.parse('$sourceApi/api/Instructor/$id'));
+  if (response.statusCode == 200) {
+    return InstructorModel.fromJson(json.decode(response.body));
+  } else {
+    throw Exception('Failed to load instructor details');
+  }
+}
 
 class CitacionTile extends StatelessWidget {
   final Map<String, dynamic> citacion;
@@ -188,7 +240,7 @@ class CitacionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CardStyle.buildCard(
-      onTap: (){},
+      onTap: () {},
       child: ExpandableCard.ExpandibleCard(
         title: 'Hora Inicio | ${citacion['horainicio']}',
         subtitle: _buildSubtitle(),
@@ -197,22 +249,36 @@ class CitacionTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Hora Fin: ${citacion['horafin']}', style: const TextStyle(color: Colors.black),),
-              Text('Aprendices: ${citacion['solicitud_data']['aprendiz']}', style: const TextStyle(color: Colors.black)),
-              Text('Instructor: ${citacion['solicitud_data']['responsable']}', style: const TextStyle(color: Colors.black)),
-              Text('Descripción: ${citacion['solicitud_data']['descripcion']}', style: const TextStyle(color: Colors.black)),
+              Text(
+                'Hora inicio: ${citacion['horainicio']}',
+                style: const TextStyle(color: Colors.black),
+              ),
+              Text(
+                'Hora fin: ${citacion['horafin']}',
+                style: const TextStyle(color: Colors.black),
+              ),
+              Text(
+                'Aprendiz: ${citacion['solicitud_data']['aprendiz']}',
+                style: const TextStyle(color: Colors.black),
+              ),
+              Text(
+                'Instructor: ${citacion['solicitud_data']['responsable']}',
+                style: const TextStyle(color: Colors.black),
+              ),
+              Text(
+                'Descripción: ${citacion['solicitud_data']['descripcion']}',
+                style: const TextStyle(color: Colors.black),
+              ),
             ],
           ),
         ),
       ),
     );
   }
-   String _buildSubtitle() {
+
+  String _buildSubtitle() {
     final lugar = citacion['lugarcitacion'];
     final enlace = citacion['enlacecitacion'];
-
-    // Si el lugar es "No aplica", muestra el enlace; de lo contrario, muestra el lugar.
     return lugar == 'No aplica' ? 'Enlace: $enlace' : 'Lugar: $lugar';
   }
 }
-

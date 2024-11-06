@@ -15,12 +15,12 @@ List<SolicitudModel> solicitud = [];
 /// Clase que representa una solicitud en la aplicación.
 class SolicitudModel {
   final int id;
-  final List<dynamic> aprendiz; // Asumiendo que es una lista de IDs
+  List<dynamic> aprendiz; // Asumiendo que es una lista de IDs
   final DateTime fechasolicitud;
   final String descripcion;
   final String observaciones;
-  final List<dynamic> responsable; // Asumiendo que es una lista de IDs
-  final List<dynamic> reglamento; // Asumiendo que es una lista de IDs
+  List<dynamic> responsable; // Asumiendo que es una lista de IDs
+  List<dynamic> reglamento; // Asumiendo que es una lista de IDs
   final bool solicitudenviada;
   bool citacionenviada;
   bool comiteenviado;

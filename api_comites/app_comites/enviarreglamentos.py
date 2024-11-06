@@ -18,7 +18,7 @@ with open('reglamentos.json', 'r', encoding='utf-8') as file:
 
 # Insertar los datos en la base de datos
 for reglamento in reglamentos:
-    # Validar longitud de los campos (ajustar tamaños según tu esquema de base de datos)
+   
    
 
     cursor.execute('''
