@@ -204,3 +204,24 @@ class CitacionSerializer(serializers.ModelSerializer):
     def get_solicitud_data(self, obj):
         # Serializar la solicitud completa si está presente
         return SolicitudSerializer(obj.solicitud).data if obj.solicitud else None
+    
+class ActaSerializer(serializers.ModelSerializer):
+    clasificacion = serializers.ChoiceField(choices=Acta.clasificacion.choices, default=Acta.clasificacion.PUBLICA)
+    citacion = CitacionSerializer()  # Anidar el serializador de Citacion aquí
+
+    class Meta:
+        model = Acta
+        fields = [
+            'id',
+            'citacion',
+            'verificacionquorom',
+            'verificacionasistenciaaprendiz',
+            'verificacionbeneficio',
+            'reporte',
+            'descargos',
+            'pruebas',
+            'deliberacion',
+            'votos',
+            'conclusiones',
+            'lasificacioninformacion'
+        ]

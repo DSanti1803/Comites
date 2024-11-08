@@ -5,7 +5,8 @@
         "numeral": "Articulo 9, numeral 1",
         "descripcion": "Cumplir con todas las actividades propias de su proceso de aprendizaje o del plan de mejoramiento, definidas durante su etapa lectiva y productiva.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "grave"
     },
     {
         "id": 2,
@@ -13,7 +14,8 @@
         "numeral": "Articulo 9, numeral 2",
         "descripcion": "Respetar los derechos ajenos y no abusar de los propios.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 3,
@@ -21,7 +23,8 @@
         "numeral": "Articulo 9, numeral 3",
         "descripcion": "Verificar en el sistema que sus datos básicos, se encuentren totalmente diligenciados y/o actualizarlos de acuerdo con el trámite administrativo correspondiente.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "leve"
     },
     {
         "id": 4,
@@ -29,15 +32,17 @@
         "numeral": "Articulo 9, numeral 4",
         "descripcion": "Participar en las actividades complementarias o de profundización, relacionadas con el programa de formación, con el fin de gestionar su proceso de aprendizaje.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "leve"
     },
     {
         "id": 5,
         "capitulo": "Capitulo III DEBERES DEL APRENDIZ SENA",
         "numeral": "Articulo 9, numeral 5",
-        "descripcion": "Informar y hacer la solicitud, por escrito, al Coordinador Académico y registrar en el sistema de gestión de la formación oportunamente las solicitudes o novedades (Traslados, Aplazamiento, Retiro voluntario y Reingreso), que presente durante el proceso de aprendizaje, utilizando medios virtuales y/o físicos; ; para los programas de formación complementaria en modalidad virtual, realizar en los sistemas de información el retiro voluntario del programa o inscripción del mismo",
+        "descripcion": "Informar y hacer la solicitud, por escrito, al Coordinador Académico y registrar en el sistema de gestión de la formación oportunamente las solicitudes o novedades (Traslados, Aplazamiento, Retiro voluntario y Reingreso), que presente durante el proceso de aprendizaje, utilizando medios virtuales y/o físicos; para los programas de formación complementaria en modalidad virtual, realizar en los sistemas de información el retiro voluntario del programa o inscripción del mismo.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 6,
@@ -45,7 +50,8 @@
         "numeral": "Articulo 9, numeral 6",
         "descripcion": "Si el trámite para la consecución de contrato de aprendizaje o de otra de las alternativas para el desarrollo de la etapa productiva, es realizado directamente por el aprendiz, este deberá informar inmediatamente cuando esto ocurra, a los responsables de apoyar este proceso en el Centro de Formación.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "leve"
     },
     {
         "id": 7,
@@ -53,7 +59,8 @@
         "numeral": "Articulo 9, numeral 7",
         "descripcion": "Proteger los recursos culturales y naturales del país y velar por la conservación del ambiente sano, vinculándose, apoyando y/o colaborando en las acciones que adelante el Centro de Formación.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 8,
@@ -61,7 +68,8 @@
         "numeral": "Articulo 9, numeral 8",
         "descripcion": "Acatar las decisiones contempladas en el Manual de Convivencia.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 9,
@@ -69,7 +77,8 @@
         "numeral": "Articulo 9, numeral 9",
         "descripcion": "Asumir con responsabilidad su participación en las actividades programadas como salidas, pasantías técnicas, intercambios de aprendices a nivel nacional e internacional, así como en las demás de carácter lúdico-pedagógico.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "leve"
     },
     {
         "id": 10,
@@ -77,7 +86,8 @@
         "numeral": "Articulo 9, numeral 10",
         "descripcion": "Hacer uso apropiado de los ambientes de aprendizaje (infraestructura, equipos, herramientas, recursos didácticos, técnicos, tecnológicos, bibliográficos), disponibles para su proceso de aprendizaje, asumiendo responsabilidad legal en situaciones de utilización inadecuada y uso indebido, que deterioran los ambientes de aprendizaje y generan detrimento patrimonial.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 11,
@@ -85,7 +95,8 @@
         "numeral": "Articulo 9, numeral 11",
         "descripcion": "Asistir a las reuniones que programe el Centro de Formación para seguimiento a las actividades desarrolladas durante la etapa productiva. La no asistencia a estas reuniones debe justificarse mediante excusa comprobable.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "leve"
     },
     {
         "id": 12,
@@ -93,7 +104,8 @@
         "numeral": "Articulo 9, numeral 12",
         "descripcion": "Respetar los derechos de autor en los materiales, trabajos, proyectos y demás documentos generados por los grupos de trabajo o compañeros, y que hayan sido compartidos al interior de la Plataforma.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "muy grave"
     },
     {
         "id": 13,
@@ -101,7 +113,8 @@
         "numeral": "Articulo 9, numeral 13",
         "descripcion": "Conocer y asumir las políticas y directrices institucionales establecidas, así como el Reglamento del Aprendiz Sena, y convivir en comunidad de acuerdo con ellos.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 14,
@@ -109,7 +122,8 @@
         "numeral": "Articulo 9, numeral 14",
         "descripcion": "Portar permanentemente y en lugar visible el carné que lo identifica como Aprendiz Sena, durante su proceso de aprendizaje, renovarlo de acuerdo con las disposiciones vigentes y devolverlo al finalizar el programa o cuando se presente retiro, aplazamiento o cancelación de la matrícula.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "leve"
     },
     {
         "id": 15,
@@ -117,47 +131,53 @@
         "numeral": "Articulo 9, numeral 15",
         "descripcion": "Utilizar la dotación o ropa de trabajo y los elementos de protección personal dispuestos en los ambientes de aprendizaje, observando las condiciones de prevención señaladas por el Instructor o Tutor y organizarlos para ser utilizados exclusivamente en el ambiente de aprendizaje requerido.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "grave"
     },
     {
         "id": 16,
         "capitulo": "Capitulo III DEBERES DEL APRENDIZ SENA",
         "numeral": "Articulo 9, numeral 16",
-        "descripcion": "Portar el uniforme de manera decorosa; dentro del Centro de Formación, en los ambientes donde se desarrollen actividades extracurriculares y entornos diferentes al académico. Así como en el",
+        "descripcion": "Portar el uniforme de manera decorosa; dentro del Centro de Formación, en los ambientes donde se desarrollen actividades extracurriculares y entornos diferentes al académico.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "leve"
     },
     {
         "id": 17,
         "capitulo": "Capitulo III DEBERES DEL APRENDIZ SENA",
         "numeral": "Articulo 9, numeral 17",
-        "descripcion": " Conservar y mantener en buen estado, orden y aseo, las instalaciones físicas, el material didáctico, equipos y herramientas de la entidad o que estén a cargo de esta, respondiendo por los daños ocasionados a estos intencionalmente o por descuido, debidamente comprobados",
+        "descripcion": "Conservar y mantener en buen estado, orden y aseo, las instalaciones físicas, el material didáctico, equipos y herramientas de la entidad o que estén a cargo de esta, respondiendo por los daños ocasionados a estos intencionalmente o por descuido, debidamente comprobados.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 18,
         "capitulo": "Capitulo III DEBERES DEL APRENDIZ SENA",
         "numeral": "Articulo 9, numeral 18",
-        "descripcion": "Actuar siempre teniendo como base los principios y valores para la convivencia; obrar con honestidad, respeto, responsabilidad, lealtad, justicia, compañerismo y solidaridad con la totalidad de los integrantes de la comunidad educativa y expresarse con respeto, cultura y educación, en forma directa, a través de medios impresos o electrónicos que le facilita la entidad (como foros de discusión, redes sociales, chat, correo electrónico, blogs y demás).",
+        "descripcion": "Actuar siempre teniendo como base los principios y valores para la convivencia; obrar con honestidad, respeto, responsabilidad, lealtad, justicia, compañerismo y solidaridad con la totalidad de los integrantes de la comunidad educativa y expresarse con respeto, cultura y educación, en forma directa, a través de medios impresos o electrónicos que le facilita la entidad.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 19,
         "capitulo": "Capitulo III DEBERES DEL APRENDIZ SENA",
         "numeral": "Articulo 9, numeral 19",
-        "descripcion": "Hacer uso apropiado de los espacios de comunicación y respetar a los integrantes de la comunidad educativa, siendo solidario, tolerante y veraz en la información que se publique en medios impresos o digitales; abstenerse de enviar material multimedia que contenga imágenes, videos, documentos o grabaciones que no sean objeto de las actividades de aprendizaje.",
+        "descripcion": "Hacer uso apropiado de los espacios de comunicación y respetar a los integrantes de la comunidad educativa, siendo solidario, tolerante y veraz en la información que se publique en medios impresos o digitales.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 20,
         "capitulo": "Capitulo III DEBERES DEL APRENDIZ SENA",
         "numeral": "Articulo 9, numeral 20",
-        "descripcion": "Informar al instructor, coordinador, directivo o personal de apoyo, cualquier irregularidad que comprometa el buen nombre y normal marcha del Centro de Formación de la entidad y de la comunidad educativa, o que considere sospechosa dentro de la Institución y en los ambientes de aprendizaje, permitiendo una actuación oportuna, preventiva o correctiva.",
+        "descripcion": "Informar al instructor, coordinador, directivo o personal de apoyo, cualquier irregularidad que comprometa el buen nombre y normal marcha del Centro de Formación de la entidad y de la comunidad educativa.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "leve"
     },
     {
         "id": 21,
@@ -165,7 +185,8 @@
         "numeral": "Articulo 9, numeral 21",
         "descripcion": "Respetar la dignidad, intimidad e integridad de los miembros de la comunidad educativa Sena.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 22,
@@ -173,7 +194,8 @@
         "numeral": "Articulo 9, numeral 22",
         "descripcion": "Respetar los bienes y elementos de propiedad de los integrantes de la comunidad educativa y del Sena.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 23,
@@ -181,15 +203,17 @@
         "numeral": "Articulo 9, numeral 23",
         "descripcion": "Obrar conforme al principio del respeto de los derechos de los demás evitando realizar y/o apoyar actos que limiten y/o afecten a la comunidad educativa, como impedir el acceso a funcionarios y aprendices a los centros de formación y demás instalaciones del Sena.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 24,
         "capitulo": "Capitulo III DEBERES DEL APRENDIZ SENA",
         "numeral": "Articulo 9, numeral 24",
         "descripcion": "Presentar siempre las mejores condiciones de aseo y pulcritud personal.",
-       "academico": false,
-        "disciplinario": true
+        "academico": false,
+        "disciplinario": true,
+        "gravedad": "leve"
     },
     {
         "id": 25,
@@ -197,7 +221,8 @@
         "numeral": "Articulo 9, numeral 25",
         "descripcion": "Enaltecer y respetar los símbolos patrios e institucionales.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "leve"
     },
     {
         "id": 26,
@@ -205,7 +230,8 @@
         "numeral": "Articulo 9, numeral 26",
         "descripcion": "No usar expresiones grotescas en foros de discusión, mensajes, anuncios, correos tanto generales como en grupos de trabajo.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "leve"
     },
     {
         "id": 27,
@@ -213,7 +239,8 @@
         "numeral": "Articulo 9, numeral 27",
         "descripcion": "Cumplir a cabalidad la normatividad vigente del Estado colombiano en lo referente a delitos informáticos.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 28,
@@ -221,7 +248,8 @@
         "numeral": "Articulo 9, numeral 28",
         "descripcion": "Denunciar tratos, propuestas, o actos inmorales de parte de cualquier funcionario y de cualquier miembro de la comunidad educativa.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 29,
@@ -229,7 +257,8 @@
         "numeral": "Articulo 9, numeral 29",
         "descripcion": "Suscribir al momento de asentar la matrícula el Acta de Compromiso como Aprendiz Sena.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "leve"
     },
     {
         "id": 30,
@@ -237,7 +266,8 @@
         "numeral": "Articulo 9, numeral 30",
         "descripcion": "Verificar a través del Sistema Gestión Virtual de Aprendices, que el contrato de aprendizaje con la empresa patrocinadora se encuentre acorde al contrato físico firmado, y en caso de encontrar inconsistencias reportarlo de forma inmediata a la Oficina de Promoción y Relaciones Corporativas de su Centro con la líder de contrato de aprendizaje.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "grave"
     },
     {
         "id": 31,
@@ -245,7 +275,8 @@
         "numeral": "Articulo 9, PARAGRAFO 10, A",
         "descripcion": "Acceder regularmente a los ambientes virtuales previstos para la formación y mantener una comunicación frecuente con el tutor",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "leve"
     },
     {
         "id": 32,
@@ -253,7 +284,8 @@
         "numeral": "Articulo 9, PARAGRAFO 10, B",
         "descripcion": "Dedicar al proceso de aprendizaje las horas semanales señaladas para cada programa, que permitan dar cumplimiento a las horas establecidas, teniendo en cuenta el cronograma y metodología establecidos por el Instructor-Tutor.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "grave"
     },
     {
         "id": 33,
@@ -261,15 +293,17 @@
         "numeral": "Articulo 9, PARAGRAFO 10, C",
         "descripcion": "Ingresar a la plataforma virtual, debidamente identificado con el respectivo código de acceso, personal e intransferible. El Usuario y la Contraseña suministrado al aprendiz por la Entidad, para el acceso a la plataforma virtual son de uso personal exclusivo, por lo tanto no debe transferirse a otras personas. El mal uso de esta información es de su competencia directa y asumirá por ello las responsabilidades correspondientes.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "grave"
     },
     {
         "id": 34,
         "capitulo": "Capitulo III DEBERES DEL APRENDIZ SENA",
         "numeral": "Articulo 9, PARAGRAFO 10, D",
-        "descripcion": " Realizar personalmente las evaluaciones, investigaciones, actividades y prácticas de formación, haciendo uso de sus conocimientos, su esfuerzo personal, creatividad y autoría propia, absteniéndose de presentar como propios, escritos, documentos, ideas, o resultados que no sean de su autoría.",
+        "descripcion": "Realizar personalmente las evaluaciones, investigaciones, actividades y prácticas de formación, haciendo uso de sus conocimientos, su esfuerzo personal, creatividad y autoría propia, absteniéndose de presentar como propios, escritos, documentos, ideas, o resultados que no sean de su autoría.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "muy grave"
     },
     {
         "id": 35,
@@ -277,7 +311,8 @@
         "numeral": "Articulo 9, PARAGRAFO 10, E",
         "descripcion": "Participar en los foros de discusión y demás espacios de socialización del ambiente virtual, reconociendo, compartiendo y construyendo conocimiento con los integrantes de la comunidad educativa, contribuyendo con el aporte de conocimientos y destrezas en la solución y propuesta de los temas del programa",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "leve"
     },
     {
         "id": 36,
@@ -285,15 +320,17 @@
         "numeral": "Articulo 9, PARAGRAFO 10, F",
         "descripcion": "Respetar los comentarios o participaciones realizadas por los demás integrantes de la comunidad educativa.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "leve"
     },
     {
         "id": 37,
         "capitulo": "Capitulo III DEBERES DEL APRENDIZ SENA",
         "numeral": "Articulo 9, PARAGRAFO 10, G",
-        "descripcion": " Cumplir con los trabajos indicados por los Tutores, enviando puntualmente las actividades definidas en el cronograma del Programa.",
+        "descripcion": "Cumplir con los trabajos indicados por los Tutores, enviando puntualmente las actividades definidas en el cronograma del Programa.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "grave"
     },
     {
         "id": 38,
@@ -301,7 +338,8 @@
         "numeral": "Articulo 10, numeral 1",
         "descripcion": "Plagiar materiales, trabajos y demás documentos generados en los grupos de trabajo o producto del trabajo en equipo institucional, así como las fuentes bibliográficas consultadas en los diferentes soportes.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "muy grave"
     },
     {
         "id": 39,
@@ -309,7 +347,8 @@
         "numeral": "Articulo 10, numeral 2",
         "descripcion": "Terminar unilateralmente el contrato de aprendizaje, sin el visto bueno del empleador y del Sena.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "grave"
     },
     {
         "id": 40,
@@ -317,7 +356,8 @@
         "numeral": "Articulo 10, numeral 3",
         "descripcion": "Incumplir con las actividades de aprendizaje acordadas y los compromisos adquiridos como Aprendiz Sena, sin justa causa.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "grave"
     },
     {
         "id": 41,
@@ -325,7 +365,8 @@
         "numeral": "Articulo 10, numeral 4",
         "descripcion": "Realizar fraude en evaluaciones, en el proceso de aprendizaje o en concursos, juegos o competencias de cualquier carácter.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "muy grave"
     },
     {
         "id": 42,
@@ -333,7 +374,8 @@
         "numeral": "Articulo 10, numeral 5",
         "descripcion": "Aportar documentación o información que difiera con la real, para el ingreso a la entidad o para obtener cualquier beneficio de la misma.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 43,
@@ -341,7 +383,8 @@
         "numeral": "Articulo 10, numeral 6",
         "descripcion": "Fumar en áreas no permitidas en el centro de formación, así como ingresar, comercializar, promocionar, ingerir o suministrar bebidas alcohólicas o sustancias psicoactivas, dentro de las instalaciones del Sena, o ingresar a la entidad en estado que indique alteraciones ocasionadas por el consumo de estos.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 44,
@@ -349,7 +392,8 @@
         "numeral": "Articulo 10, numeral 7",
         "descripcion": "Ingresar o portar armas, objetos cortopunzantes, explosivos u otros artefactos que representen riesgo o puedan ser empleados para atentar contra la vida o la integridad física de las personas.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 45,
@@ -357,7 +401,8 @@
         "numeral": "Articulo 10, numeral 8",
         "descripcion": "Utilizar el nombre del Sena, las instalaciones o campos virtuales, para actividades particulares o con ánimo de lucro, exceptuando aquellas que sean parte de proyectos productivos aprobados por el Subdirector de Centro o la instancia competente.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 46,
@@ -365,7 +410,8 @@
         "numeral": "Articulo 10, numeral 9",
         "descripcion": "Hurtar, estafar o abusar de la confianza de cualquier integrante de la comunidad educativa, o amenazarlo, sobornarlo, coaccionarlo o agredirlo verbal o físicamente.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 47,
@@ -373,7 +419,8 @@
         "numeral": "Articulo 10, numeral 10",
         "descripcion": "Contribuir al desorden y/o al desaseo.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "leve"
     },
     {
         "id": 48,
@@ -381,7 +428,8 @@
         "numeral": "Articulo 10, numeral 11",
         "descripcion": "Destruir, sustraer, dañar total o parcialmente instalaciones físicas, equipos, materiales, software, elementos y dotación en general del Sena o de instituciones, empresas u otras entidades.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 49,
@@ -389,7 +437,8 @@
         "numeral": "Articulo 10, numeral 12",
         "descripcion": "Obstaculizar el ingreso a las instalaciones de los Centros de Formación y/o perturbar el desarrollo normal de las actividades de aprendizaje.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 50,
@@ -397,7 +446,8 @@
         "numeral": "Articulo 10, numeral 13",
         "descripcion": "Practicar o propiciar juegos de azar, rifas u otros como la ouija, etc, con miembros de la comunidad educativa, al interior de las instalaciones del Sena, sin autorización de la instancia competente.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "leve"
     },
     {
         "id": 51,
@@ -405,7 +455,8 @@
         "numeral": "Articulo 10, numeral 14",
         "descripcion": "Realizar acciones proselitistas de carácter político o religioso dentro de las instalaciones del Sena y demás ambientes donde se desarrollen actividades formativas.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 52,
@@ -413,7 +464,8 @@
         "numeral": "Articulo 10, numeral 15",
         "descripcion": "Permanecer con el uniforme acordado para el programa de formación de la especialidad, en situaciones o lugares ajenos al proceso de aprendizaje, que deterioren la imagen institucional.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "leve"
     },
     {
         "id": 53,
@@ -421,7 +473,8 @@
         "numeral": "Articulo 10, numeral 16",
         "descripcion": "Generar, transmitir, publicar o enviar información confidencial, de circulación restringida, inadecuada, malintencionada, violenta, pornográfica, insultos o agresiones por los medios de comunicación físicos o electrónicos.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 54,
@@ -429,16 +482,17 @@
         "numeral": "Articulo 10, numeral 17",
         "descripcion": "Todo acto que sabotee, perturbe o impida las actividades de formación, administrativas y de bienestar que se realicen en la entidad.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 55,
         "capitulo": "Capitulo IV PROHIBICIONES",
         "numeral": "Articulo 10, numeral 18",
         "descripcion": "Realizar comportamientos contrarios a la normativa Sena en lugares donde se adelanten eventos de formación nacional o internacional.",
-       "academico": false,
-        "disciplinario": true
-        
+        "academico": false,
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 56,
@@ -446,7 +500,8 @@
         "numeral": "Articulo 10, numeral 19",
         "descripcion": "Incumplir con la fecha límite de reintegro al Centro de Formación después de haber participado en un programa de movilidad estudiantil nacional o internacional.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 55,
@@ -454,7 +509,8 @@
         "numeral": "Articulo 10, numeral 20",
         "descripcion": "Incumplir las normas de convivencia establecidas en cada Centro de Formación o Internado.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "grave"
     },
     {
         "id": 56,
@@ -462,7 +518,8 @@
         "numeral": "Articulo 10, numeral 21",
         "descripcion": "Suplantar identidad durante el proceso de formación.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 57,
@@ -470,7 +527,8 @@
         "numeral": "Articulo 10, numeral 22",
         "descripcion": "Ingresar o salir de cualquier instalación del Centro de Formación o de la entidad donde se desarrolle la formación, por sitios diferentes a la portería, saltando muros, cercas o violentando puertas, ventanas y cerraduras.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 58,
@@ -478,7 +536,8 @@
         "numeral": "Articulo 10, numeral 23",
         "descripcion": "Alterar, adulterar, falsificar o sustraer documentos oficiales, calificaciones, evaluaciones o firmas correspondientes al Sena o emitidos por ella.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 59,
@@ -486,7 +545,8 @@
         "numeral": "Articulo 10, numeral 24",
         "descripcion": "Elaborar escritos o mensajes satíricos, dibujar y/o escribir sobre cualquier superficie, objeto o mueble de las instalaciones donde se desarrollan programas de formación; o pegar avisos, carteles, pancartas o análogos en sitios no autorizados.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "leve"
     },
     {
         "id": 60,
@@ -494,7 +554,8 @@
         "numeral": "Articulo 10, numeral 25",
         "descripcion": "Propiciar conductas, propuestas o actos inmorales hacia cualquier miembro de la comunidad educativa, que atenten contra la integridad física, moral y/o psicológica.",
         "academico": false,
-        "disciplinario": true
+        "disciplinario": true,
+        "gravedad": "muy grave"
     },
     {
         "id": 61,
@@ -502,7 +563,8 @@
         "numeral": "Articulo 10, numeral 26",
         "descripcion": "Incumplir con las entrevistas o procesos de selección a los que ha sido citado por las empresas patrocinadoras para la consecución de su contrato de aprendizaje.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "grave"
     },
     {
         "id": 62,
@@ -510,7 +572,8 @@
         "numeral": "Articulo 10, numeral 27",
         "descripcion": "Cometer faltas en el desarrollo del contrato de aprendizaje que originen la finalización unilateral del contrato por parte de la empresa patrocinadora con justa causa y agotado el debido proceso.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "grave"
     },
     {
         "id": 63,
@@ -518,7 +581,8 @@
         "numeral": "Articulo 10, numeral 28",
         "descripcion": "Firmar contratos de aprendizaje sin realizar la gestión a través del Sistema Gestión Virtual de Aprendices, o sin encontrarse registrado como aprendiz disponible en dicha plataforma.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "grave"
     },
     {
         "id": 64,
@@ -526,7 +590,8 @@
         "numeral": "Articulo 10, numeral 29",
         "descripcion": "Incumplir con la presentación de documentos establecidos en el Sistema de Gestión Virtual de Aprendices y los emitidos por la oficina de relaciones corporativas del Centro de Formación respectivo.",
         "academico": true,
-        "disciplinario": false
+        "disciplinario": false,
+        "gravedad": "leve"
     }
 
 ]

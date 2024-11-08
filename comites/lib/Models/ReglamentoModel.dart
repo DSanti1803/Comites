@@ -8,6 +8,7 @@ class ReglamentoModel {
   final String descripcion;
   final bool academico;
   final bool disciplinario;
+  final String gravedad;
 
   ReglamentoModel({
     required this.id,
@@ -16,6 +17,7 @@ class ReglamentoModel {
     required this.descripcion,
     required this.academico,
     required this.disciplinario,
+    required this.gravedad,
   });
 
   factory ReglamentoModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,9 @@ class ReglamentoModel {
           : "",
       academico: json['academico'] ?? false,
       disciplinario: json['disciplinario'] ?? false,
+      gravedad: json['gravedad'] != null
+          ? utf8.decode(json['gravedad'].toString().runes.toList())
+          : "leve", // Valor por defecto
     );
   }
 

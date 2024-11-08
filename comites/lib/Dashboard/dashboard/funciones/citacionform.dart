@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, non_constant_identifier_names
+import 'package:comites/Dashboard/dashboard/funciones/procesos_coordinacion.dart';
 import 'package:comites/Models/AprendizModel.dart';
 import 'package:comites/Models/CoordinadorModel.dart';
 import 'package:comites/Models/instructormodel.dart';
@@ -35,6 +36,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
     super.initState();
     futureSolicitudes = getSolicitud();
     _loadCoordinacion();
+    _buildPendingSolicitudesList();
   }
 
   @override
@@ -93,132 +95,147 @@ class _CitacionesFormState extends State<CitacionesForm> {
     }
   }
 
-  Widget _buildPendingSolicitudesList() {
-    return FutureBuilder<List<SolicitudModel>>(
-      future: futureSolicitudes,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData) {
-          solicitudes = snapshot.data!;
+ Widget _buildPendingSolicitudesList() {
+  return FutureBuilder<List<SolicitudModel>>(
+    future: futureSolicitudes,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Center(
+          child: Wrap(
+            spacing: 10.0,
+            runSpacing: 10.0,
+            children: List.generate(5, (_) => 
+              const SizedBox(
+                width: 300, // Ancho aproximado de la tarjeta
+                height: 20, // Altura aproximada de la tarjeta
+                child: SkeletonLoader(),
+              ),
+            ),
+          ),
+        );
+      } else if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      } else if (snapshot.hasData) {
+        solicitudes = snapshot.data!;
 
-          solicitudesPendientes = solicitudes.where((solicitud) {
-            return solicitud.aprendiz.any((aprendizId) {
-              final aprendiz = aprendices.firstWhere(
-                (a) => a.id == aprendizId,
-                orElse: () => UsuarioAprendizModel(
-                    id: -1,
-                    nombres: '',
-                    apellidos: '',
-                    tipoDocumento: '',
-                    numeroDocumento: '',
-                    ficha: '',
-                    programa: '',
-                    correoElectronico: '',
-                    rol1: '',
-                    estado: true,
-                    coordinacion: ''), // Valor por defecto
-              );
-              return aprendiz.coordinacion == coordinacionActual &&
-                  !solicitud.citacionenviada;
-            });
-          }).toList();
+        solicitudesPendientes = solicitudes.where((solicitud) {
+          return solicitud.aprendiz.any((aprendizId) {
+            final aprendiz = aprendices.firstWhere(
+              (a) => a.id == aprendizId,
+              orElse: () => UsuarioAprendizModel(
+                  id: -1,
+                  nombres: '',
+                  apellidos: '',
+                  tipoDocumento: '',
+                  numeroDocumento: '',
+                  ficha: '',
+                  programa: '',
+                  correoElectronico: '',
+                  rol1: '',
+                  estado: true,
+                  coordinacion: ''), // Valor por defecto
+            );
+            return aprendiz.coordinacion == coordinacionActual &&
+                !solicitud.citacionenviada;
+          });
+        }).toList();
 
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return Wrap(
-                  spacing: 10.0,
-                  runSpacing: 10.0,
-                  alignment: WrapAlignment.start,
-                  children: solicitudesPendientes.map((solicitud) {
-                    // Llamadas Future para obtener todos los detalles de aprendices y responsables
-                    final aprendizFutures = solicitud.aprendiz
-                        .map((id) => _getAprendizDetails(id))
-                        .toList();
-                    final responsableFutures = solicitud.responsable
-                        .map((id) => _getInstructorDetails(id))
-                        .toList();
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Wrap(
+                spacing: 10.0,
+                runSpacing: 10.0,
+                alignment: WrapAlignment.start,
+                children: solicitudesPendientes.map((solicitud) {
+                  // Llamadas Future para obtener todos los detalles de aprendices y responsables
+                  final aprendizFutures = solicitud.aprendiz
+                      .map((id) => _getAprendizDetails(id))
+                      .toList();
+                  final responsableFutures = solicitud.responsable
+                      .map((id) => _getInstructorDetails(id))
+                      .toList();
 
-                    return FutureBuilder(
-                      future: Future.wait(
-                          [...aprendizFutures, ...responsableFutures]),
-                      builder:
-                          (context, AsyncSnapshot<List<dynamic>> snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        } else if (snapshot.hasData) {
-                          // Separar los detalles de aprendices y responsables
-                          final aprendicesDetails = snapshot.data!
-                              .sublist(0, solicitud.aprendiz.length)
-                              .cast<UsuarioAprendizModel>();
-                          final responsablesDetails = snapshot.data!
-                              .sublist(solicitud.aprendiz.length)
-                              .cast<InstructorModel>();
+                  return FutureBuilder(
+                    future: Future.wait(
+                        [...aprendizFutures, ...responsableFutures]),
+                    builder:
+                        (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox(
+                          width: 300,
+                          height: 20,
+                          child: SkeletonLoader(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.hasData) {
+                        // Separar los detalles de aprendices y responsables
+                        final aprendicesDetails = snapshot.data!
+                            .sublist(0, solicitud.aprendiz.length)
+                            .cast<UsuarioAprendizModel>();
+                        final responsablesDetails = snapshot.data!
+                            .sublist(solicitud.aprendiz.length)
+                            .cast<InstructorModel>();
 
-                          return SizedBox(
-                            width: constraints.maxWidth > 600
-                                ? 300
-                                : constraints.maxWidth * 0.9,
-                            child: AnimacionSobresaliente(
-                              scaleFactor: 1.04,
-                              child: Card(
-                                elevation: 3,
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 10),
-                                child: ListTile(
-                                  title: Text(
-                                    'Acta | ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text('Aprendices:'),
-                                      ...aprendicesDetails
-                                          .map((aprendiz) => Text(
-                                                '${aprendiz.nombres} ${aprendiz.apellidos}',
-                                              )),
-                                      const SizedBox(height: 8),
-                                      const Text('Responsables:'),
-                                      ...responsablesDetails
-                                          .map((responsable) => Text(
-                                                '${responsable.nombres} ${responsable.apellidos}',
-                                              )),
-                                    ],
-                                  ),
-                                  trailing: const Icon(
-                                    Icons.pending_actions,
-                                    color: Colors.green,
-                                  ),
+                        return SizedBox(
+                          width: constraints.maxWidth > 600
+                              ? 300
+                              : constraints.maxWidth * 0.9,
+                          child: AnimacionSobresaliente(
+                            scaleFactor: 1.04,
+                            child: Card(
+                              elevation: 3,
+                              margin:
+                                  const EdgeInsets.symmetric(vertical: 10),
+                              child: ListTile(
+                                title: Text(
+                                  'Acta | ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('Aprendices:'),
+                                    ...aprendicesDetails.take(5).map((aprendiz) => Text(
+                                          '${aprendiz.nombres} ${aprendiz.apellidos}',
+                                        )),
+                                    if (aprendicesDetails.length > 5)
+                                      Text('... y ${aprendicesDetails.length - 5} aprendices más'),
+                                    const SizedBox(height: 8),
+                                    const Text('Responsables:'),
+                                    ...responsablesDetails.map((responsable) => Text(
+                                          '${responsable.nombres} ${responsable.apellidos}',
+                                        )),
+                                  ],
+                                ),
+                                trailing: const Icon(
+                                  Icons.pending_actions,
+                                  color: Colors.green,
                                 ),
                               ),
                             ),
-                          );
-                        } else {
-                          return const Text('Cargando datos...');
-                        }
-                      },
-                    );
-                  }).toList(),
-                );
-              },
-            ),
-          );
-        } else {
-          return const Text('No hay solicitudes pendientes');
-        }
-      },
-    );
-  }
+                          ),
+                        );
+                      } else {
+                        return const Text('Cargando datos...');
+                      }
+                    },
+                  );
+                }).toList(),
+              );
+            },
+          ),
+        );
+      } else {
+        return const Text('No hay solicitudes pendientes');
+      }
+    },
+  );
+}
+
 
   Widget _AgendarAutoButton() {
     return ElevatedButton(
@@ -272,6 +289,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
 
   void _ModalAgendar() async {
     final DateTime? pickedDate = await showDatePicker(
+      helpText: 'Dia Comité',
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
@@ -283,6 +301,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
     _fechaController.text = pickedDate.toIso8601String().split('T')[0];
 
     final TimeOfDay? pickedStartTime = await showTimePicker(
+      helpText: 'Hora Inicio',
       context: context,
       initialTime: const TimeOfDay(hour: 9, minute: 0),
     );
@@ -292,6 +311,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
     _horaInicioController.text = pickedStartTime.format(context);
 
     final TimeOfDay? pickedEndTime = await showTimePicker(
+      helpText: 'Hora Fin',
       context: context,
       initialTime: const TimeOfDay(hour: 16, minute: 0),
     );
@@ -424,6 +444,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
 
     // Selección de la nueva hora de inicio
     TimeOfDay? newStartTime = await showTimePicker(
+      helpText: 'Nueva Hora Inicio',
       context: context,
       initialTime: TimeOfDay.fromDateTime(currentStartTime),
     );
@@ -432,6 +453,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
 
     // Selección de la nueva hora de fin
     TimeOfDay? newEndTime = await showTimePicker(
+      helpText: 'Nueva Hora Fin',
       context: context,
       initialTime: TimeOfDay.fromDateTime(currentEndTime),
     );

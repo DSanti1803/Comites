@@ -144,6 +144,7 @@ class Reglamento(models.Model):
     descripcion = models.CharField(max_length=1000, blank=False, null=False)
     academico = models.BooleanField(default=True, blank=False, null=False)
     disciplinario = models.BooleanField(default=True, blank=False, null=False)
+    gravedad= models.CharField(max_length=250, blank=False, null=False)
 
     
     
@@ -198,3 +199,24 @@ class Citacion(models.Model):
     horafin = models.TimeField()
     lugarcitacion = models.CharField(max_length=600, blank=False, null=False)
     enlacecitacion = models.CharField(max_length=600, blank=False, null=False)
+    
+class Acta(models.Model):
+    
+    class clasificacion(models.TextChoices):
+        PUBLICA = "PUBLICA", ('PUBLICA')
+        PRIVADO = "PRIVADO", ('PRIVADO')
+        SEMIPRIVADO = "SEMIPRIVADO", ('SEMIPRIVADO')
+        SENSISBLE = "SENSISBLE", ('SENSISBLE')
+
+    id = models.AutoField(primary_key=True)
+    citacion = models.ForeignKey(Citacion, on_delete=models.CASCADE)
+    verificacionquorom = models.CharField(max_length=600, blank=False, null=False)
+    verificacionasistenciaaprendiz = models.CharField(max_length=600, blank=False, null=False)
+    verificacionbeneficio = models.CharField(max_length=600, blank=False, null=False)
+    reporte = models.CharField(max_length=600, blank=False, null=False)
+    descargos = models.CharField(max_length=600, blank=False, null=False)
+    pruebas = models.CharField(max_length=600, blank=False, null=False)
+    deliberacion = models.CharField(max_length=600, blank=False, null=False)
+    votos = models.CharField(max_length=600, blank=False, null=False)
+    conclusiones = models.CharField(max_length=600, blank=False, null=False)
+    lasificacioninformacion= models.CharField( max_length=15, choices=clasificacion.choices, default=clasificacion.PUBLICA, blank=True, null=True)
