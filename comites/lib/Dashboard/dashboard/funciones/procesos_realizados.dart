@@ -430,19 +430,21 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
 
   //Construye la cuadricula de cada card, tomando el tamaño de la pantalla
   //Para asi mostrar cierta cantidad de cards segun el tamaño de la pantalla
+  //Construye la cuadricula de cada card, tomando el tamaño de la pantalla
+  //Para asi mostrar cierta cantidad de cards segun el tamaño de la pantalla
 Widget _buildGrid(List<SolicitudModel> solicitudes) {
   return Center(
     child: SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Wrap(
-          spacing: 30.0, // Espacio horizontal entre tarjetas
-          runSpacing: 20.0, // Espacio vertical entre tarjetas
-          alignment: WrapAlignment.center, // Centrar las tarjetas en cada fila
+          spacing: 30.0,
+          runSpacing: 20.0,
+          alignment: WrapAlignment.center,
           children: solicitudes.map((solicitud) {
             return ConstrainedBox(
               constraints: const BoxConstraints(
-                maxWidth: 400, // Tamaño máximo para cada tarjeta
+                maxWidth: 400,
               ),
               child: FutureBuilder<List<UsuarioAprendizModel>>(
                 future: Future.wait(
@@ -460,7 +462,7 @@ Widget _buildGrid(List<SolicitudModel> solicitudes) {
                     final nombresAprendices = aprendices
                         .map((a) => '${a.nombres} ${a.apellidos}')
                         .join(', ');
-    
+
                     return FutureBuilder<List<ReglamentoModel>>(
                       future: Future.wait(
                         solicitud.reglamento.map((id) => _getReglamentoDetails(id)),
@@ -474,111 +476,27 @@ Widget _buildGrid(List<SolicitudModel> solicitudes) {
                           return const Text('No hay reglamentos disponibles');
                         } else {
                           final reglamentos = reglamentoSnapshot.data!;
-                          final reglamentoInfo = reglamentos
-                              .map((a) => '${a.capitulo} ${a.numeral}')
-                              .join(', ');
-    
-                          final academicosCount = reglamentos
-                              .where((r) => r.academico)
-                              .length;
-                          final disciplinariosCount = reglamentos
-                              .where((r) => r.disciplinario)
-                              .length;
-    
-                          return CardStyle.buildCard(
-                            onTap: () {},
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // FECHA
-                          _buildRow(
-                            icon: Icons.calendar_today,
-                            label: 'Fecha: ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
-                            isHovered: false,
-                          ),
-                          const SizedBox(height: 10),
-                          // FICHA
-                          _buildRow(
-                            icon: Icons.numbers,
-                            label: 'Ficha: ${aprendices.isNotEmpty ? aprendices[0].ficha : 'No disponible'}',
-                            isHovered: false,
-                          ),
-                          const SizedBox(height: 10),
-                          // APRENDICES
-                          Tooltip(
-                            message: nombresAprendices,
-                            child: _buildRow(
-                              icon: Icons.people,
-                              label: 'Aprendices: ${aprendices.length}',
-                              isHovered: false,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          // REGLAMENTOS ACADÉMICOS
-                          Tooltip(
-                            message: reglamentoInfo,
-                            child: _buildRow(
-                              icon: Icons.book,
-                              label: 'Reglamentos Académicos: $academicosCount',
-                              isHovered: false,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          // REGLAMENTOS DISCIPLINARIOS
-                          Tooltip(
-                            message: reglamentoInfo,
-                            child: _buildRow(
-                              
-                            icon: Icons.book,
-                            label: 'Reglamentos Disciplinarios: $disciplinariosCount',
-                            isHovered: false,
-                          ),
-                          ),
-                          const SizedBox(height: 20),
-                          // INDICADORES DE ESTADO (BOOL)
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              _buildWorkFlow(
-                                [
-                                  solicitud.solicitudenviada,
-                                  solicitud.citacionenviada,
-                                  solicitud.comiteenviado,
-                                  solicitud.planmejoramiento,
-                                  solicitud.desicoordinador,
-                                  solicitud.desiabogada,
-                                  solicitud.finalizado,
-                                ],
-                                ["", "", "", "", "", "", ""],
-                                solicitud,
-                                isModal: false,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          // BOTONES
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const SizedBox(width: 10),
-                             _buildButton(
-                                label: 'Descargar Documento',
-                                icon: Icons.file_download, // Ícono de descarga
-                                color: Colors.blue,
-                                onPressed: () async {
-                                  await _generatePdf(solicitud);
-                                },
-                              )
-                            ],
-                          ),
-                                ],
-                              ),
-                            ),
-                          );
+                          
+                          // Determine the card style based on gravedad
+                          Widget selectedCardStyle;
+                          if (reglamentos.any((reglamento) => reglamento.gravedad == "muy grave")) {
+                            selectedCardStyle = CardMuyGrave.buildCard(
+                              onTap: () {},
+                              child: _buildCardContent(solicitud, nombresAprendices, reglamentos),
+                            );
+                          } else if (reglamentos.any((reglamento) => reglamento.gravedad == "grave")) {
+                            selectedCardStyle = CardGrave.buildCard(
+                              onTap: () {},
+                              child: _buildCardContent(solicitud, nombresAprendices, reglamentos),
+                            );
+                          } else {
+                            selectedCardStyle = CardStyle.buildCard(
+                              onTap: () {},
+                              child: _buildCardContent(solicitud, nombresAprendices, reglamentos),
+                            );
+                          }
+
+                          return selectedCardStyle;
                         }
                       },
                     );
@@ -592,6 +510,98 @@ Widget _buildGrid(List<SolicitudModel> solicitudes) {
     ),
   );
 }
+
+// Extracted card content builder for reuse
+Widget _buildCardContent(SolicitudModel solicitud, String nombresAprendices, List<ReglamentoModel> reglamentos) {
+  final academicosCount = reglamentos.where((r) => r.academico).length;
+  final disciplinariosCount = reglamentos.where((r) => r.disciplinario).length;
+  final reglamentoInfo = reglamentos.map((a) => '${a.capitulo} ${a.numeral}').join(', ');
+
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildRow(
+          icon: Icons.calendar_today,
+          label: 'Fecha: ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
+          isHovered: false,
+        ),
+        const SizedBox(height: 10),
+        _buildRow(
+          icon: Icons.numbers,
+          label: 'Ficha: ${aprendices.isNotEmpty ? aprendices[0].ficha : 'No disponible'}',
+          isHovered: false,
+        ),
+        const SizedBox(height: 10),
+        Tooltip(
+          message: nombresAprendices,
+          child: _buildRow(
+            icon: Icons.people,
+            label: 'Aprendices: ${solicitud.aprendiz.length}',
+            isHovered: false,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Tooltip(
+          message: reglamentoInfo,
+          child: _buildRow(
+            icon: Icons.book,
+            label: 'Reglamentos Académicos: $academicosCount',
+            isHovered: false,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Tooltip(
+          message: reglamentoInfo,
+          child: _buildRow(
+            icon: Icons.book,
+            label: 'Reglamentos Disciplinarios: $disciplinariosCount',
+            isHovered: false,
+          ),
+        ),
+        const SizedBox(height: 20),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _buildWorkFlow(
+              [
+                solicitud.solicitudenviada,
+                solicitud.citacionenviada,
+                solicitud.comiteenviado,
+                solicitud.planmejoramiento,
+                solicitud.desicoordinador,
+                solicitud.desiabogada,
+                solicitud.finalizado,
+              ],
+              ["", "", "", "", "", "", ""],
+              solicitud,
+              isModal: false,
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(width: 10),
+            _buildButton(
+              label: 'Descargar Documento',
+              icon: Icons.file_download,
+              color: Colors.blue,
+              onPressed: () async {
+                await _generatePdf(solicitud);
+              },
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildRow({
   required IconData icon,
