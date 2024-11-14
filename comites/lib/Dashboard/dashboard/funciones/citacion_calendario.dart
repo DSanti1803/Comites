@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, library_private_types_in_public_api
+import 'package:comites/Dashboard/dashboard/funciones/Actaform.dart';
 import 'package:comites/Models/AprendizModel.dart';
 import 'package:comites/Models/instructormodel.dart';
 import 'package:comites/Widgets/Cards.dart';
@@ -237,70 +238,75 @@ class CitacionTile extends StatelessWidget {
     this.maxWidth = 400,
   });
 
-@override
-Widget build(BuildContext context) {
-  return CardStyle.buildCard(
-    onTap: () {},
-    child: ExpandableCard.ExpandibleCard(
-      title: 'Hora Inicio | ${citacion['horainicio']}',
-      subtitle: _buildSubtitle(),
-      expandedContent: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Hora inicio: ${citacion['horainicio']}',
-              style: const TextStyle(color: Colors.black),
-            ),
-            Text(
-              'Hora fin: ${citacion['horafin']}',
-              style: const TextStyle(color: Colors.black),
-            ),
-            Text(
-              'Aprendiz: ${citacion['solicitud_data']['aprendiz']}',
-              style: const TextStyle(color: Colors.black),
-            ),
-            Text(
-              'Instructor: ${citacion['solicitud_data']['responsable']}',
-              style: const TextStyle(color: Colors.black),
-            ),
-            Text(
-              'Descripción: ${citacion['solicitud_data']['descripcion']}',
-              style: const TextStyle(color: Colors.black),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Acción para aplazar
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+  @override
+  Widget build(BuildContext context) {
+    return CardStyle.buildCard(
+      onTap: () {},
+      child: ExpandableCard.ExpandibleCard(
+        title: 'Hora Inicio | ${citacion['horainicio']}',
+        subtitle: _buildSubtitle(),
+        expandedContent: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Hora inicio: ${citacion['horainicio']}',
+                style: const TextStyle(color: Colors.black),
+              ),
+              Text(
+                'Hora fin: ${citacion['horafin']}',
+                style: const TextStyle(color: Colors.black),
+              ),
+              Text(
+                'Aprendiz: ${citacion['solicitud_data']['aprendiz']}',
+                style: const TextStyle(color: Colors.black),
+              ),
+              Text(
+                'Instructor: ${citacion['solicitud_data']['responsable']}',
+                style: const TextStyle(color: Colors.black),
+              ),
+              Text(
+                'Descripción: ${citacion['solicitud_data']['descripcion']}',
+                style: const TextStyle(color: Colors.black),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      // Acción para aplazar
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                    ),
+                    child: const Text('Aplazar'),
                   ),
-                  child: const Text('Aplazar'),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    // Acción para acta
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ActaForm(citacionId: citacion['id']),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    child: const Text('Acta'),
                   ),
-                  child: const Text('Acta'),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   String _buildSubtitle() {
     final lugar = citacion['lugarcitacion'];

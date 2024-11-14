@@ -1,4 +1,3 @@
-
 // ignore_for_file: file_names
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -42,7 +41,6 @@ class UsuarioAprendizModel {
       rol1: json['rol1'] ?? "",
       estado: json['estado'] ?? true,
       coordinacion: json['coordinacion'] ?? "",
-
     );
   }
 }
@@ -55,7 +53,6 @@ Future<List<UsuarioAprendizModel>> getAprendiz() async {
   ///
   /// Esta URL se utiliza para realizar una solicitud GET a la API y obtener los datos de los usuarios.
   String url = "";
-
 
   // Construir la URL de la API utilizando la variable de configuración [sourceApi]
   url = "$sourceApi/api/UsuarioAprendiz/";
@@ -89,7 +86,6 @@ Future<List<UsuarioAprendizModel>> getAprendiz() async {
           rol1: aprendizdata['rol1'] ?? "",
           estado: aprendizdata['estado'] ?? true,
           coordinacion: aprendizdata['coordinacion'] ?? "",
-
         ),
       );
     }
