@@ -428,167 +428,170 @@ class _ProcesosRealizadosState extends State<ProcesosRealizados> {
   );
 }
 
+  //Construye la cuadricula de cada card, tomando el tamaño de la pantalla
+  //Para asi mostrar cierta cantidad de cards segun el tamaño de la pantalla
 Widget _buildGrid(List<SolicitudModel> solicitudes) {
-  return SingleChildScrollView(
-    child: Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Wrap(
-        spacing: 15.0, // Espacio horizontal entre tarjetas
-        runSpacing: 15.0, // Espacio vertical entre tarjetas
-        alignment: WrapAlignment.center, // Centrar las tarjetas en cada fila
-        children: solicitudes.map((solicitud) {
-          return ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 400, // Tamaño máximo para cada tarjeta
-            ),
-            child: FutureBuilder<List<UsuarioAprendizModel>>(
-              future: Future.wait(
-                solicitud.aprendiz.map((id) => _getAprendizDetails(id)),
+  return Center(
+    child: SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Wrap(
+          spacing: 30.0, // Espacio horizontal entre tarjetas
+          runSpacing: 20.0, // Espacio vertical entre tarjetas
+          alignment: WrapAlignment.center, // Centrar las tarjetas en cada fila
+          children: solicitudes.map((solicitud) {
+            return ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 400, // Tamaño máximo para cada tarjeta
               ),
-              builder: (context, aprendizSnapshot) {
-                if (aprendizSnapshot.connectionState == ConnectionState.waiting) {
-                  return const SkeletonLoader();
-                } else if (aprendizSnapshot.hasError) {
-                  return Text('Error: ${aprendizSnapshot.error}');
-                } else if (!aprendizSnapshot.hasData || aprendizSnapshot.data!.isEmpty) {
-                  return const Text('No hay aprendices disponibles');
-                } else {
-                  final aprendices = aprendizSnapshot.data!;
-                  final nombresAprendices = aprendices
-                      .map((a) => '${a.nombres} ${a.apellidos}')
-                      .join(', ');
-
-                  return FutureBuilder<List<ReglamentoModel>>(
-                    future: Future.wait(
-                      solicitud.reglamento.map((id) => _getReglamentoDetails(id)),
-                    ),
-                    builder: (context, reglamentoSnapshot) {
-                      if (reglamentoSnapshot.connectionState == ConnectionState.waiting) {
-                        return const SkeletonLoader();
-                      } else if (reglamentoSnapshot.hasError) {
-                        return Text('Error: ${reglamentoSnapshot.error}');
-                      } else if (!reglamentoSnapshot.hasData || reglamentoSnapshot.data!.isEmpty) {
-                        return const Text('No hay reglamentos disponibles');
-                      } else {
-                        final reglamentos = reglamentoSnapshot.data!;
-                        final reglamentoInfo = reglamentos
-                            .map((a) => '${a.capitulo} ${a.numeral}')
-                            .join(', ');
-
-                        final academicosCount = reglamentos
-                            .where((r) => r.academico)
-                            .length;
-                        final disciplinariosCount = reglamentos
-                            .where((r) => r.disciplinario)
-                            .length;
-
-                        return CardStyle.buildCard(
-                          onTap: () {},
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // FECHA
-                        _buildRow(
-                          icon: Icons.calendar_today,
-                          label: 'Fecha: ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
-                          isHovered: false,
-                        ),
-                        const SizedBox(height: 10),
-                        // FICHA
-                        _buildRow(
-                          icon: Icons.numbers,
-                          label: 'Ficha: ${aprendices.isNotEmpty ? aprendices[0].ficha : 'No disponible'}',
-                          isHovered: false,
-                        ),
-                        const SizedBox(height: 10),
-                        // APRENDICES
-                        Tooltip(
-                          message: nombresAprendices,
-                          child: _buildRow(
-                            icon: Icons.people,
-                            label: 'Aprendices: ${aprendices.length}',
+              child: FutureBuilder<List<UsuarioAprendizModel>>(
+                future: Future.wait(
+                  solicitud.aprendiz.map((id) => _getAprendizDetails(id)),
+                ),
+                builder: (context, aprendizSnapshot) {
+                  if (aprendizSnapshot.connectionState == ConnectionState.waiting) {
+                    return const SkeletonLoader();
+                  } else if (aprendizSnapshot.hasError) {
+                    return Text('Error: ${aprendizSnapshot.error}');
+                  } else if (!aprendizSnapshot.hasData || aprendizSnapshot.data!.isEmpty) {
+                    return const Text('No hay aprendices disponibles');
+                  } else {
+                    final aprendices = aprendizSnapshot.data!;
+                    final nombresAprendices = aprendices
+                        .map((a) => '${a.nombres} ${a.apellidos}')
+                        .join(', ');
+    
+                    return FutureBuilder<List<ReglamentoModel>>(
+                      future: Future.wait(
+                        solicitud.reglamento.map((id) => _getReglamentoDetails(id)),
+                      ),
+                      builder: (context, reglamentoSnapshot) {
+                        if (reglamentoSnapshot.connectionState == ConnectionState.waiting) {
+                          return const SkeletonLoader();
+                        } else if (reglamentoSnapshot.hasError) {
+                          return Text('Error: ${reglamentoSnapshot.error}');
+                        } else if (!reglamentoSnapshot.hasData || reglamentoSnapshot.data!.isEmpty) {
+                          return const Text('No hay reglamentos disponibles');
+                        } else {
+                          final reglamentos = reglamentoSnapshot.data!;
+                          final reglamentoInfo = reglamentos
+                              .map((a) => '${a.capitulo} ${a.numeral}')
+                              .join(', ');
+    
+                          final academicosCount = reglamentos
+                              .where((r) => r.academico)
+                              .length;
+                          final disciplinariosCount = reglamentos
+                              .where((r) => r.disciplinario)
+                              .length;
+    
+                          return CardStyle.buildCard(
+                            onTap: () {},
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // FECHA
+                          _buildRow(
+                            icon: Icons.calendar_today,
+                            label: 'Fecha: ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
                             isHovered: false,
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        // REGLAMENTOS ACADÉMICOS
-                        Tooltip(
-                          message: reglamentoInfo,
-                          child: _buildRow(
+                          const SizedBox(height: 10),
+                          // FICHA
+                          _buildRow(
+                            icon: Icons.numbers,
+                            label: 'Ficha: ${aprendices.isNotEmpty ? aprendices[0].ficha : 'No disponible'}',
+                            isHovered: false,
+                          ),
+                          const SizedBox(height: 10),
+                          // APRENDICES
+                          Tooltip(
+                            message: nombresAprendices,
+                            child: _buildRow(
+                              icon: Icons.people,
+                              label: 'Aprendices: ${aprendices.length}',
+                              isHovered: false,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          // REGLAMENTOS ACADÉMICOS
+                          Tooltip(
+                            message: reglamentoInfo,
+                            child: _buildRow(
+                              icon: Icons.book,
+                              label: 'Reglamentos Académicos: $academicosCount',
+                              isHovered: false,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          // REGLAMENTOS DISCIPLINARIOS
+                          Tooltip(
+                            message: reglamentoInfo,
+                            child: _buildRow(
+                              
                             icon: Icons.book,
-                            label: 'Reglamentos Académicos: $academicosCount',
+                            label: 'Reglamentos Disciplinarios: $disciplinariosCount',
                             isHovered: false,
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        // REGLAMENTOS DISCIPLINARIOS
-                        Tooltip(
-                          message: reglamentoInfo,
-                          child: _buildRow(
-                            
-                          icon: Icons.book,
-                          label: 'Reglamentos Disciplinarios: $disciplinariosCount',
-                          isHovered: false,
-                        ),
-                        ),
-                        const SizedBox(height: 20),
-                        // INDICADORES DE ESTADO (BOOL)
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            _buildWorkFlow(
-                              [
-                                solicitud.solicitudenviada,
-                                solicitud.citacionenviada,
-                                solicitud.comiteenviado,
-                                solicitud.planmejoramiento,
-                                solicitud.desicoordinador,
-                                solicitud.desiabogada,
-                                solicitud.finalizado,
-                              ],
-                              ["", "", "", "", "", "", ""],
-                              solicitud,
-                              isModal: false,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        // BOTONES
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(width: 10),
-                           _buildButton(
-                              label: 'Descargar Documento',
-                              icon: Icons.file_download, // Ícono de descarga
-                              color: Colors.blue,
-                              onPressed: () async {
-                                await _generatePdf(solicitud);
-                              },
-                            )
-                          ],
-                        ),
-                              ],
-                            ),
                           ),
-                        );
-                      }
-                    },
-                  );
-                }
-              },
-            ),
-          );
-        }).toList(),
+                          const SizedBox(height: 20),
+                          // INDICADORES DE ESTADO (BOOL)
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              _buildWorkFlow(
+                                [
+                                  solicitud.solicitudenviada,
+                                  solicitud.citacionenviada,
+                                  solicitud.comiteenviado,
+                                  solicitud.planmejoramiento,
+                                  solicitud.desicoordinador,
+                                  solicitud.desiabogada,
+                                  solicitud.finalizado,
+                                ],
+                                ["", "", "", "", "", "", ""],
+                                solicitud,
+                                isModal: false,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          // BOTONES
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(width: 10),
+                             _buildButton(
+                                label: 'Descargar Documento',
+                                icon: Icons.file_download, // Ícono de descarga
+                                color: Colors.blue,
+                                onPressed: () async {
+                                  await _generatePdf(solicitud);
+                                },
+                              )
+                            ],
+                          ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  }
+                },
+              ),
+            );
+          }).toList(),
+        ),
       ),
     ),
   );
 }
-
 
   Widget _buildRow({
   required IconData icon,

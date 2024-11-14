@@ -95,7 +95,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
     }
   }
 
- Widget _buildPendingSolicitudesList() {
+Widget _buildPendingSolicitudesList() {
   return FutureBuilder<List<SolicitudModel>>(
     future: futureSolicitudes,
     builder: (context, snapshot) {
@@ -104,10 +104,10 @@ class _CitacionesFormState extends State<CitacionesForm> {
           child: Wrap(
             spacing: 10.0,
             runSpacing: 10.0,
-            children: List.generate(5, (_) => 
+            children: List.generate(5, (_) =>
               const SizedBox(
-                width: 300, // Ancho aproximado de la tarjeta
-                height: 20, // Altura aproximada de la tarjeta
+                width: 300,
+                height: 20,
                 child: SkeletonLoader(),
               ),
             ),
@@ -123,45 +123,39 @@ class _CitacionesFormState extends State<CitacionesForm> {
             final aprendiz = aprendices.firstWhere(
               (a) => a.id == aprendizId,
               orElse: () => UsuarioAprendizModel(
-                  id: -1,
-                  nombres: '',
-                  apellidos: '',
-                  tipoDocumento: '',
-                  numeroDocumento: '',
-                  ficha: '',
-                  programa: '',
-                  correoElectronico: '',
-                  rol1: '',
-                  estado: true,
-                  coordinacion: ''), // Valor por defecto
+                id: -1,
+                nombres: '',
+                apellidos: '',
+                tipoDocumento: '',
+                numeroDocumento: '',
+                ficha: '',
+                programa: '',
+                correoElectronico: '',
+                rol1: '',
+                estado: true,
+                coordinacion: ''
+              ),
             );
-            return aprendiz.coordinacion == coordinacionActual &&
-                !solicitud.citacionenviada;
+            return aprendiz.coordinacion == coordinacionActual && !solicitud.citacionenviada;
           });
         }).toList();
 
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Wrap(
-                spacing: 10.0,
-                runSpacing: 10.0,
-                alignment: WrapAlignment.start,
-                children: solicitudesPendientes.map((solicitud) {
-                  // Llamadas Future para obtener todos los detalles de aprendices y responsables
-                  final aprendizFutures = solicitud.aprendiz
-                      .map((id) => _getAprendizDetails(id))
-                      .toList();
-                  final responsableFutures = solicitud.responsable
-                      .map((id) => _getInstructorDetails(id))
-                      .toList();
-
-                  return FutureBuilder(
-                    future: Future.wait(
-                        [...aprendizFutures, ...responsableFutures]),
-                    builder:
-                        (context, AsyncSnapshot<List<dynamic>> snapshot) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Wrap(
+              spacing: 30.0, // Espacio horizontal entre tarjetas
+              runSpacing: 20.0, // Espacio vertical entre tarjetas
+              alignment: WrapAlignment.center, // Centrar las tarjetas en cada fila
+              children: solicitudesPendientes.map((solicitud) {
+                return ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 400), // Tamaño máximo de cada tarjeta
+                  child: FutureBuilder(
+                    future: Future.wait([
+                      ...solicitud.aprendiz.map((id) => _getAprendizDetails(id)),
+                      ...solicitud.responsable.map((id) => _getInstructorDetails(id)),
+                    ]),
+                    builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const SizedBox(
                           width: 300,
@@ -171,7 +165,6 @@ class _CitacionesFormState extends State<CitacionesForm> {
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else if (snapshot.hasData) {
-                        // Separar los detalles de aprendices y responsables
                         final aprendicesDetails = snapshot.data!
                             .sublist(0, solicitud.aprendiz.length)
                             .cast<UsuarioAprendizModel>();
@@ -179,42 +172,35 @@ class _CitacionesFormState extends State<CitacionesForm> {
                             .sublist(solicitud.aprendiz.length)
                             .cast<InstructorModel>();
 
-                        return SizedBox(
-                          width: constraints.maxWidth > 600
-                              ? 300
-                              : constraints.maxWidth * 0.9,
-                          child: AnimacionSobresaliente(
-                            scaleFactor: 1.04,
-                            child: Card(
-                              elevation: 3,
-                              margin:
-                                  const EdgeInsets.symmetric(vertical: 10),
-                              child: ListTile(
-                                title: Text(
-                                  'Acta | ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('Aprendices:'),
-                                    ...aprendicesDetails.take(5).map((aprendiz) => Text(
-                                          '${aprendiz.nombres} ${aprendiz.apellidos}',
-                                        )),
-                                    if (aprendicesDetails.length > 5)
-                                      Text('... y ${aprendicesDetails.length - 5} aprendices más'),
-                                    const SizedBox(height: 8),
-                                    const Text('Responsables:'),
-                                    ...responsablesDetails.map((responsable) => Text(
-                                          '${responsable.nombres} ${responsable.apellidos}',
-                                        )),
-                                  ],
-                                ),
-                                trailing: const Icon(
-                                  Icons.pending_actions,
-                                  color: Colors.green,
-                                ),
+                        return AnimacionSobresaliente(
+                          scaleFactor: 1.09,
+                          child: Card(
+                            elevation: 3,
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            child: ListTile(
+                              title: Text(
+                                'Acta | ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Aprendices:'),
+                                  ...aprendicesDetails.take(5).map((aprendiz) => Text(
+                                    '${aprendiz.nombres} ${aprendiz.apellidos}',
+                                  )),
+                                  if (aprendicesDetails.length > 5)
+                                    Text('... y ${aprendicesDetails.length - 5} aprendices más'),
+                                  const SizedBox(height: 8),
+                                  const Text('Responsables:'),
+                                  ...responsablesDetails.map((responsable) => Text(
+                                    '${responsable.nombres} ${responsable.apellidos}',
+                                  )),
+                                ],
+                              ),
+                              trailing: const Icon(
+                                Icons.pending_actions,
+                                color: Colors.green,
                               ),
                             ),
                           ),
@@ -223,10 +209,10 @@ class _CitacionesFormState extends State<CitacionesForm> {
                         return const Text('Cargando datos...');
                       }
                     },
-                  );
-                }).toList(),
-              );
-            },
+                  ),
+                );
+              }).toList(),
+            ),
           ),
         );
       } else {
@@ -235,6 +221,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
     },
   );
 }
+
 
 
   Widget _AgendarAutoButton() {
