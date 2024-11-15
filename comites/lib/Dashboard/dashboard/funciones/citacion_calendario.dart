@@ -186,22 +186,38 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
               ),
             ),
             LayoutBuilder(
-              builder: (context, constraints) {
-                return Wrap(
-                  alignment: WrapAlignment.start,
-                  spacing: 10.0,
-                  runSpacing: 10.0,
-                  children: _getEventsForDay(_selectedDay ?? _focusedDay)
-                      .map((event) => SizedBox(
-                            width: constraints.maxWidth > 600
-                                ? 300
-                                : constraints.maxWidth * 0.9,
-                            child: CitacionTile(citacion: event),
-                          ))
-                      .toList(),
-                );
-              },
-            ),
+  builder: (context, constraints) {
+    final eventsForSelectedDay = _getEventsForDay(_selectedDay ?? _focusedDay);
+
+    if (eventsForSelectedDay.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Text(
+          'No hay eventos para este día',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
+        ),
+      );
+    }
+
+    return Wrap(
+      alignment: WrapAlignment.start,
+      spacing: 10.0,
+      runSpacing: 10.0,
+      children: eventsForSelectedDay
+          .map((event) => SizedBox(
+                width: constraints.maxWidth > 600
+                    ? 300
+                    : constraints.maxWidth * 0.9,
+                child: CitacionTile(citacion: event),
+              ))
+          .toList(),
+    );
+  },
+),
           ],
         ),
       ),
@@ -284,21 +300,39 @@ class CitacionTile extends StatelessWidget {
                     child: const Text('Aplazar'),
                   ),
                   const SizedBox(width: 10),
-                  ElevatedButton(
+                 ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ActaForm(citacionId: citacion['id']),
-                        ),
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            content: SingleChildScrollView(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: MediaQuery.of(context).size.width * 0.9,
+                                  maxHeight: MediaQuery.of(context).size.height * 0.8,
+                                ),
+                                child: ActaForm(citacionId: citacion['id']),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text("Cerrar"),
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                     ),
                     child: const Text('Acta'),
-                  ),
+                  )
                 ],
               ),
             ],

@@ -206,8 +206,7 @@ class CitacionSerializer(serializers.ModelSerializer):
         return SolicitudSerializer(obj.solicitud).data if obj.solicitud else None
     
 class ActaSerializer(serializers.ModelSerializer):
-    clasificacion = serializers.ChoiceField(choices=Acta.clasificacion.choices, default=Acta.clasificacion.PUBLICA)
-    citacion = CitacionSerializer()  # Anidar el serializador de Citacion aquí
+    citacion = CitacionSerializer()  # Nested serializer
 
     class Meta:
         model = Acta
@@ -223,5 +222,5 @@ class ActaSerializer(serializers.ModelSerializer):
             'deliberacion',
             'votos',
             'conclusiones',
-            'lasificacioninformacion'
+            'clasificacioninformacion'  # Use the model's field name here
         ]

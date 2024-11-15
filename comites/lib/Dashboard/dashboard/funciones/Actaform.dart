@@ -1,12 +1,12 @@
-import 'dart:convert';
-import 'package:comites/Models/ActaModel.dart';
+// ignore_for_file: file_names, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:comites/Models/ActaModel.dart';
 
 class ActaForm extends StatefulWidget {
   final int citacionId;
 
-  const ActaForm({Key? key, required this.citacionId}) : super(key: key);
+  const ActaForm({super.key, required this.citacionId});
 
   @override
   _ActaFormState createState() => _ActaFormState();
@@ -27,133 +27,100 @@ class _ActaFormState extends State<ActaForm> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      final newActa = ActaModel(
-        id: 0, // Asigna un ID según lo maneje tu backend.
-        citacion: widget.citacionId,
-        verificacionquorom: _quoromController.text,
-        verificacionasistenciaaprendiz: _asistenciaController.text,
-        verificacionbeneficio: _beneficioController.text,
-        reporte: _reporteController.text,
-        descargos: _descargosController.text,
-        pruebas: _pruebasController.text,
-        deliberacion: _deliberacionController.text,
-        votos: _votosController.text,
-        conclusiones: _conclusionesController.text,
-        clasificacioninformacion: _selectedClasificacion,
-      );
-
-      // Llama a la función postActa para enviar los datos
-      await postActa(newActa);
-
-      Navigator.pop(context); // Cierra el formulario después de guardar.
-    }
-  }
-
-  Future<void> postActa(ActaModel acta) async {
-    final url = Uri.parse('http://127.0.0.1:8000/api/Acta/');
-    final headers = {'Content-Type': 'application/json'};
-    final body = jsonEncode(acta.toJson()); // Convertir ActaModel a JSON
-
-    try {
-      final response = await http.post(url, headers: headers, body: body);
-
-      if (response.statusCode == 201) {
-        // Acta guardada exitosamente
-        print('Acta creada con éxito');
-      } else {
-        // Error al guardar el acta
-        print('Error al crear acta: ${response.statusCode}');
-        print('Respuesta del servidor: ${response.body}');
-      }
-    } catch (e) {
-      // Si ocurre un error en la solicitud, captúralo aquí
-      print('Error en la solicitud: $e');
+      // Aquí se envían los datos al backend
+      Navigator.pop(context); // Cierra el modal
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Crear Acta'),
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _quoromController,
-                decoration: InputDecoration(labelText: 'Verificación Quórum'),
-                validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-              ),
-              TextFormField(
-                controller: _asistenciaController,
-                decoration: InputDecoration(
-                    labelText: 'Verificación Asistencia Aprendiz'),
-                validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-              ),
-              TextFormField(
-                controller: _beneficioController,
-                decoration:
-                    InputDecoration(labelText: 'Verificación Beneficio'),
-                validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-              ),
-              TextFormField(
-                controller: _reporteController,
-                decoration: InputDecoration(labelText: 'Reporte'),
-                validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-              ),
-              TextFormField(
-                controller: _descargosController,
-                decoration: InputDecoration(labelText: 'Descargos'),
-                validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-              ),
-              TextFormField(
-                controller: _pruebasController,
-                decoration: InputDecoration(labelText: 'Pruebas'),
-                validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-              ),
-              TextFormField(
-                controller: _deliberacionController,
-                decoration: InputDecoration(labelText: 'Deliberación'),
-                validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-              ),
-              TextFormField(
-                controller: _votosController,
-                decoration: InputDecoration(labelText: 'Votos'),
-                validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-              ),
-              TextFormField(
-                controller: _conclusionesController,
-                decoration: InputDecoration(labelText: 'Conclusiones'),
-                validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-              ),
-              DropdownButtonFormField<Clasificacion>(
-                value: _selectedClasificacion,
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedClasificacion = newValue!;
-                  });
-                },
-                items: Clasificacion.values.map((clasificacion) {
-                  return DropdownMenuItem(
-                    value: clasificacion,
-                    child: Text(clasificacion.toString().split('.').last),
-                  );
-                }).toList(),
-                decoration:
-                    InputDecoration(labelText: 'Clasificación Información'),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: Text('Guardar Acta'),
-              ),
-            ],
+      insetPadding: const EdgeInsets.all(20),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.9,
+          maxHeight: MediaQuery.of(context).size.height * 0.8,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Crear Acta',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      _buildFormField(
+                          controller: _quoromController, label: 'Verificación Quórum'),
+                      _buildFormField(
+                          controller: _asistenciaController,
+                          label: 'Verificación Asistencia Aprendiz'),
+                      _buildFormField(
+                          controller: _beneficioController,
+                          label: 'Verificación Beneficio'),
+                      _buildFormField(controller: _reporteController, label: 'Reporte'),
+                      _buildFormField(controller: _descargosController, label: 'Descargos'),
+                      _buildFormField(controller: _pruebasController, label: 'Pruebas'),
+                      _buildFormField(controller: _deliberacionController, label: 'Deliberación'),
+                      _buildFormField(controller: _votosController, label: 'Votos'),
+                      _buildFormField(
+                          controller: _conclusionesController, label: 'Conclusiones'),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<Clasificacion>(
+                        value: _selectedClasificacion,
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedClasificacion = newValue!;
+                          });
+                        },
+                        items: Clasificacion.values.map((clasificacion) {
+                          return DropdownMenuItem(
+                            value: clasificacion,
+                            child: Text(clasificacion.toString().split('.').last),
+                          );
+                        }).toList(),
+                        decoration: const InputDecoration(
+                          labelText: 'Clasificación Información',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: _submitForm,
+                        child: const Text('Guardar Acta'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildFormField(
+      {required TextEditingController controller, required String label}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        ),
+        validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
       ),
     );
   }

@@ -55,6 +55,10 @@ class CitacionViewSet(viewsets.ModelViewSet):
     queryset = Citacion.objects.all()
     serializer_class = CitacionSerializer
     
+class ActaViewSet(viewsets.ModelViewSet):
+    queryset = Acta.objects.all()
+    serializer_class = ActaSerializer
+    
     
 
 

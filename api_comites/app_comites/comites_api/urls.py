@@ -14,6 +14,7 @@ router.register(r'AprendizSolicitud', AprendizSolicitudViewSet, basename='Aprend
 router.register(r'InstructorSolicitud', InstructorSolicitudViewSet, basename='InstructorSolicitud')
 router.register(r'ReglamentoSolicitud', ReglamentoSolicitudViewSet, basename='ReglamentoSolicitud')
 router.register(r'Citacion', CitacionViewSet, basename='Citacion')
+router.register(r'Acta', ActaViewSet, basename='Acta')
 
 
 urlpatterns = [

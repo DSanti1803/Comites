@@ -219,4 +219,4 @@ class Acta(models.Model):
     deliberacion = models.CharField(max_length=600, blank=False, null=False)
     votos = models.CharField(max_length=600, blank=False, null=False)
     conclusiones = models.CharField(max_length=600, blank=False, null=False)
-    lasificacioninformacion= models.CharField( max_length=15, choices=clasificacion.choices, default=clasificacion.PUBLICA, blank=True, null=True)
+    clasificacioninformacion= models.CharField( max_length=15, choices=clasificacion.choices, default=clasificacion.PUBLICA, blank=True, null=True)
