@@ -114,6 +114,7 @@ class _ActaFormState extends State<ActaForm> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
+        maxLines: null,
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
