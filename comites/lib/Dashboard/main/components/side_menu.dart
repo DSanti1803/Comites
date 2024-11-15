@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'package:comites/Dashboard/main/Main_Funciones/main_aceptar.dart';
 import 'package:comites/Dashboard/main/Main_Funciones/main_calendario.dart';
 import 'package:comites/Dashboard/main/Main_Funciones/main_procesos_coordinacion.dart';
 import 'package:comites/Dashboard/main/Main_Funciones/main_procesos_realizados.dart';
@@ -375,6 +376,23 @@ class _SideMenuState extends State<SideMenu> {
                         ChangeNotifierProvider(create: (context) => MenuAppController())
                       ],
                       child: const MainCitaciones(), 
+                    ),
+                  ),
+                );
+              },
+            ),
+             DrawerListTile(
+              title: "Aceptar Solicitudes",
+              svgSrc: "assets/icons/construccion.svg",
+              press: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MultiProvider(
+                      providers: [
+                        ChangeNotifierProvider(create: (context) => MenuAppController())
+                      ],
+                      child: const MainAceptarSolicitudes(), 
                     ),
                   ),
                 );
