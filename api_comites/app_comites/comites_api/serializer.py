@@ -198,7 +198,7 @@ class CitacionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Citacion
-        fields = ['id', 'solicitud', 'solicitud_data', 'diacitacion', 'horainicio', 'horafin', 'lugarcitacion', 'enlacecitacion']
+        fields = ['id', 'solicitud', 'solicitud_data', 'diacitacion', 'horainicio', 'horafin', 'lugarcitacion', 'enlacecitacion', 'actarealizada']
 
     # Método para mostrar todos los datos de la solicitud al visualizar
     def get_solicitud_data(self, obj):
@@ -206,21 +206,15 @@ class CitacionSerializer(serializers.ModelSerializer):
         return SolicitudSerializer(obj.solicitud).data if obj.solicitud else None
     
 class ActaSerializer(serializers.ModelSerializer):
-    citacion = CitacionSerializer()  # Nested serializer
+    citacion_data = serializers.SerializerMethodField(read_only=True)  # Método para obtener datos de la citación
+    clasificacioninformacion = serializers.ChoiceField(choices=Acta.clasificacion.choices, read_only=True)  # Agregar ChoiceField para el campo clasificacioninformacion
 
     class Meta:
         model = Acta
-        fields = [
-            'id',
-            'citacion',
-            'verificacionquorom',
-            'verificacionasistenciaaprendiz',
-            'verificacionbeneficio',
-            'reporte',
-            'descargos',
-            'pruebas',
-            'deliberacion',
-            'votos',
-            'conclusiones',
-            'clasificacioninformacion'  # Use the model's field name here
-        ]
+        fields = ['id', 'citacion', 'citacion_data', 'verificacionquorom', 'verificacionasistenciaaprendiz',
+                  'verificacionbeneficio', 'reporte', 'descargos', 'pruebas', 
+                  'deliberacion', 'votos', 'conclusiones', 'clasificacioninformacion']  # Incluir citacion_data
+
+    def get_citacion_data(self, obj):
+        # Aquí puedes serializar los detalles de la citación si lo deseas
+        return CitacionSerializer(obj.citacion).data if obj.citacion else None

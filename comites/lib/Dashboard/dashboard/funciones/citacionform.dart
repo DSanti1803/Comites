@@ -2,7 +2,9 @@
 import 'package:comites/Dashboard/dashboard/funciones/procesos_coordinacion.dart';
 import 'package:comites/Models/AprendizModel.dart';
 import 'package:comites/Models/CoordinadorModel.dart';
+import 'package:comites/Models/ReglamentoModel.dart';
 import 'package:comites/Models/instructormodel.dart';
+import 'package:comites/Widgets/Cards.dart';
 import 'package:comites/Widgets/animacionSobresaliente.dart';
 import 'package:comites/provider.dart';
 import 'package:comites/source.dart';
@@ -53,6 +55,15 @@ class _CitacionesFormState extends State<CitacionesForm> {
         ),
       ),
     );
+  }
+
+   Future<ReglamentoModel> _getReglamentoDetails(int id) async {
+    final response = await http.get(Uri.parse('$sourceApi/api/Reglamento/$id'));
+    if (response.statusCode == 200) {
+      return ReglamentoModel.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load reglamento details');
+    }
   }
 
   Future<void> _loadCoordinacion() async {
@@ -141,13 +152,6 @@ class _CitacionesFormState extends State<CitacionesForm> {
           });
         }).toList();
 
-        // Verificar si la lista de solicitudes pendientes está vacía
-        if (solicitudesPendientes.isEmpty) {
-          return const Center(
-            child: Text('No hay solicitudes pendientes'),
-          );
-        }
-
         return Center(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -160,10 +164,9 @@ class _CitacionesFormState extends State<CitacionesForm> {
                   constraints: const BoxConstraints(maxWidth: 400),
                   child: FutureBuilder(
                     future: Future.wait([
-                      ...solicitud.aprendiz
-                          .map((id) => _getAprendizDetails(id)),
-                      ...solicitud.responsable
-                          .map((id) => _getInstructorDetails(id)),
+                      ...solicitud.aprendiz.map((id) => _getAprendizDetails(id)),
+                      ...solicitud.responsable.map((id) => _getInstructorDetails(id)),
+                      ...solicitud.reglamento.map((id) => _getReglamentoDetails(id)),
                     ]),
                     builder:
                         (context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -181,54 +184,44 @@ class _CitacionesFormState extends State<CitacionesForm> {
                             .sublist(0, solicitud.aprendiz.length)
                             .cast<UsuarioAprendizModel>();
                         final responsablesDetails = snapshot.data!
-                            .sublist(solicitud.aprendiz.length)
+                            .sublist(
+                                solicitud.aprendiz.length,
+                                solicitud.aprendiz.length +
+                                    solicitud.responsable.length)
                             .cast<InstructorModel>();
+                        final reglamentosDetails = snapshot.data!
+                            .sublist(
+                                solicitud.aprendiz.length +
+                                    solicitud.responsable.length)
+                            .cast<ReglamentoModel>();
+
+                        // Determinar el estilo de la tarjeta según la gravedad
+                        Widget selectedCardStyle;
+                        if (reglamentosDetails.any(
+                            (reglamento) => reglamento.gravedad == "muy grave")) {
+                          selectedCardStyle = CardMuyGrave.buildCard(
+                            onTap: () {},
+                            child: _buildListTile(
+                                solicitud, aprendicesDetails, responsablesDetails),
+                          );
+                        } else if (reglamentosDetails.any(
+                            (reglamento) => reglamento.gravedad == "grave")) {
+                          selectedCardStyle = CardGrave.buildCard(
+                            onTap: () {},
+                            child: _buildListTile(
+                                solicitud, aprendicesDetails, responsablesDetails),
+                          );
+                        } else {
+                          selectedCardStyle = CardLeve.buildCard(
+                            onTap: () {},
+                            child: _buildListTile(
+                                solicitud, aprendicesDetails, responsablesDetails),
+                          );
+                        }
 
                         return AnimacionSobresaliente(
-                          scaleFactor: 1.09,
-                          child: Card(
-                            elevation: 3,
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: ListTile(
-                              title: Text(
-                                'Acta | ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('Aprendices:'),
-                                  ...aprendicesDetails
-                                      .take(5)
-                                      .map((aprendiz) => Text(
-                                            '${aprendiz.nombres} ${aprendiz.apellidos}',
-                                          )),
-                                  if (aprendicesDetails.length > 5)
-                                    Text(
-                                        '... y ${aprendicesDetails.length - 5} aprendices más'),
-                                  const SizedBox(height: 8),
-                                  const Text('Responsables:'),
-                                  ...responsablesDetails
-                                      .map((responsable) => Text(
-                                            '${responsable.nombres} ${responsable.apellidos}',
-                                          )),
-                                ],
-                              ),
-                              trailing: MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    _ModalAgendarindividualmente(solicitud);
-                                  },
-                                  child: const Icon(
-                                    Icons.pending_actions,
-                                    color: Colors.green,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                          scaleFactor: 1.04,
+                          child: selectedCardStyle,
                         );
                       } else {
                         return const Text('Cargando datos...');
@@ -241,11 +234,39 @@ class _CitacionesFormState extends State<CitacionesForm> {
           ),
         );
       } else {
-        return const Center(
-          child: Text('No hay solicitudes pendientes'),
-        );
+        return const Text('No hay solicitudes pendientes');
       }
     },
+  );
+}
+
+Widget _buildListTile(
+    SolicitudModel solicitud,
+    List<UsuarioAprendizModel> aprendicesDetails,
+    List<InstructorModel> responsablesDetails) {
+  return ListTile(
+    title: Text(
+      'Acta | ${DateFormat('yyyy-MM-dd').format(solicitud.fechasolicitud)}',
+      style: const TextStyle(fontWeight: FontWeight.bold),
+    ),
+    subtitle: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Aprendices:'),
+        ...aprendicesDetails.take(5).map((aprendiz) =>
+            Text('${aprendiz.nombres} ${aprendiz.apellidos}')),
+        if (aprendicesDetails.length > 5)
+          Text('... y ${aprendicesDetails.length - 5} aprendices más'),
+        const SizedBox(height: 8),
+        const Text('Responsables:'),
+        ...responsablesDetails.map((responsable) =>
+            Text('${responsable.nombres} ${responsable.apellidos}')),
+      ],
+    ),
+    trailing: const Icon(
+      Icons.pending_actions,
+      color: Colors.green,
+    ),
   );
 }
 
@@ -390,6 +411,8 @@ class _CitacionesFormState extends State<CitacionesForm> {
 
     // Agregamos solo la citación para la solicitud específica
     citacionesGeneradas.add({
+      'aprendices' : solicitud.aprendiz,
+      'fechasolicitud' : solicitud.fechasolicitud,
       'solicitudId': solicitud.id,
       'fecha': date.toIso8601String().split('T')[0],
       'horaInicio':
@@ -399,6 +422,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
       'tipoCitacion': null,
       'lugar': null,
       'enlace': null,
+      'actarealizada': false
     });
 
     // Marcar la solicitud como citación enviada
@@ -419,6 +443,8 @@ class _CitacionesFormState extends State<CitacionesForm> {
       }
 
       citacionesGeneradas.add({
+        'aprendices' : solicitud.aprendiz,
+        'fechasolicitud' : solicitud.fechasolicitud,
         'solicitudId': solicitud.id,
         'fecha': date.toIso8601String().split('T')[0],
         'horaInicio':
@@ -428,6 +454,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
         'tipoCitacion': null,
         'lugar': null,
         'enlace': null,
+        'actarealizada': false
       });
       solicitud.citacionenviada = true;
       currentTime = currentTime.add(const Duration(minutes: 20));
@@ -436,79 +463,97 @@ class _CitacionesFormState extends State<CitacionesForm> {
     // Actualiza la lista de solicitudes pendientes
   }
 
-  void _ResumenCitaciones() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setModalState) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              title: const Text(
-                'Resumen de Citaciones',
-                textAlign: TextAlign.center,
-              ),
-              content: SingleChildScrollView(
-                child: Column(
+
+void _ResumenCitaciones() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setModalState) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            title: const Text(
+              'Resumen de Citaciones',
+              textAlign: TextAlign.center,
+            ),
+            content: SingleChildScrollView(
+              child: Center(
+                child: Wrap(
+                  spacing: 10, // Espacio horizontal entre tarjetas
+                  runSpacing: 10, // Espacio vertical entre filas de tarjetas
                   children: citacionesGeneradas.asMap().entries.map((entry) {
                     int index = entry.key;
                     Map<String, dynamic> citacion = entry.value;
-                    return Card(
-                      elevation: 2,
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      child: ListTile(
-                        title: Text('Solicitud ${citacion['solicitudId']}'),
-                        subtitle: Text(
-                            '${citacion['horaInicio']} - ${citacion['horaFin']}'),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () =>
-                                  _editCitation(index, citacion, setModalState),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
-                                // Llama a la función de eliminación y actualiza el estado
-                                _deleteCitation(index, setModalState);
-                              },
-                            ),
-                          ],
+                    
+                    // Asegúrate de que citacion tenga horaInicio y horaFin
+                    String horaInicio = citacion['horaInicio'];
+                    String horaFin = citacion['horaFin'];
+                    
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.4, // Ajuste de ancho para responsive
+                      child: Card(
+                        elevation: 2,
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        child: ListTile(
+                          title: Text('Acta | ${DateFormat('yyyy-MM-dd').format(citacion['fechasolicitud'])}'),
+                          subtitle: Column(
+                            children: [
+                              Text('$horaInicio - $horaFin'),
+                              Text('Aprendices: ${citacion['aprendiz']}')
+                            ],
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit, color: Colors.blue),
+                                onPressed: () =>
+                                    _editCitation(index, citacion, setModalState),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () {
+                                  // Llama a la función de eliminación y actualiza el estado
+                                  _deleteCitation(index, setModalState);
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );
                   }).toList(),
                 ),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancelar'),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancelar'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    _showCitationDetailsForm();
-                  },
-                  child: const Text('Confirmar'),
                 ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _showCitationDetailsForm();
+                },
+                child: const Text('Confirmar'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+
 
   void _editCitation(int index, Map<String, dynamic> citacion,
       StateSetter setModalState) async {
@@ -776,6 +821,7 @@ class _CitacionesFormState extends State<CitacionesForm> {
             'horafin': citacion['horaFin'], // Hora en formato 'HH:mm'
             'lugarcitacion': isPresencial ? citacion['lugar'] : 'No aplica',
             'enlacecitacion': isPresencial ? 'No aplica' : citacion['enlace'],
+            'actarealizada': false
           }),
         );
 

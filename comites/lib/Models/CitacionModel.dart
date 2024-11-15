@@ -16,16 +16,17 @@ class CitacionModel {
   final String horafin;
   final String lugarcitacion;
   final String enlacecitacion;
+  final bool actarealizada;
 
-  CitacionModel({
-    required this.id,
-    required this.solicitud,
-    required this.diacitacion,
-    required this.horainicio,
-    required this.horafin,
-    required this.lugarcitacion,
-    required this.enlacecitacion,
-  });
+  CitacionModel(
+      {required this.id,
+      required this.solicitud,
+      required this.diacitacion,
+      required this.horainicio,
+      required this.horafin,
+      required this.lugarcitacion,
+      required this.enlacecitacion,
+      required this.actarealizada});
 
   factory CitacionModel.fromJson(Map<String, dynamic> json) {
     return CitacionModel(
@@ -36,6 +37,7 @@ class CitacionModel {
       horafin: json['horacitacion'], // Almacenar como String
       lugarcitacion: json['lugarcitacion'],
       enlacecitacion: json['enlacecitacion'],
+      actarealizada: json['actarealizada'],
     );
   }
 }

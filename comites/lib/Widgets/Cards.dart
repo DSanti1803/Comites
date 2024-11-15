@@ -18,18 +18,18 @@ class CardStyle {
             onExit: (_) => setState(() => isHovered = false),
             child: Container(
               decoration: BoxDecoration(
-                color: isHovered ? const Color(0xffe1f5fe) : const Color(0xFFFf0fee6),
+                color: isHovered ? const Color.fromARGB(255, 96, 245, 70)  : const Color(0xFFFf0fee6),
                 borderRadius: BorderRadius.circular(20.0),
                 boxShadow: [
                   BoxShadow(
-                    color: isHovered ? const Color(0xffe1f5fe) : const Color(0xff6de458),
+                    color: isHovered ? const Color.fromARGB(255, 96, 245, 70)  : const Color(0xff6de458),
                     spreadRadius: 2,
                     blurRadius: 1,
                     offset: const Offset(0, 5),
                   ),
                   BoxShadow(
                     color: isHovered
-                        ? const Color(0xffe1f5fe).withOpacity(0.1)
+                        ? const Color.fromARGB(255, 96, 245, 70).withOpacity(0.1)
                         : const Color(0xff6de458).withOpacity(0.1),
                     spreadRadius: 5,
                     blurRadius: 15,
@@ -128,18 +128,18 @@ class CardLeve {
             onExit: (_) => setState(() => isHovered = false),
             child: Container(
               decoration: BoxDecoration(
-                color: isHovered ? const Color(0xffe1f5fe) : const Color(0xFFFf0fee6),
+                color: isHovered ? const Color.fromARGB(255, 96, 245, 70) : const Color(0xff6de458),
                 borderRadius: BorderRadius.circular(20.0),
                 boxShadow: [
                   BoxShadow(
-                    color: isHovered ? const Color(0xffe1f5fe) : const Color(0xff6de458),
+                    color: isHovered ? const Color.fromARGB(255, 96, 245, 70)  : const Color(0xff6de458),
                     spreadRadius: 2,
                     blurRadius: 1,
                     offset: const Offset(0, 5),
                   ),
                   BoxShadow(
                     color: isHovered
-                        ? const Color(0xffe1f5fe).withOpacity(0.1)
+                        ? const Color.fromARGB(255, 96, 245, 70).withOpacity(0.1)
                         : const Color(0xff6de458).withOpacity(0.1),
                     spreadRadius: 5,
                     blurRadius: 15,

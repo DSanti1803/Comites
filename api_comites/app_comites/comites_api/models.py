@@ -199,6 +199,7 @@ class Citacion(models.Model):
     horafin = models.TimeField()
     lugarcitacion = models.CharField(max_length=600, blank=False, null=False)
     enlacecitacion = models.CharField(max_length=600, blank=False, null=False)
+    actarealizada= models.BooleanField(default=False)
     
 class Acta(models.Model):
     

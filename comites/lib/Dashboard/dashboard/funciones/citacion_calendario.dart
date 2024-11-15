@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, library_private_types_in_public_api
+// ignore_for_file: prefer_typing_uninitialized_variables, library_private_types_in_public_api, use_build_context_synchronously
 import 'package:comites/Dashboard/dashboard/funciones/Actaform.dart';
 import 'package:comites/Models/AprendizModel.dart';
 import 'package:comites/Models/instructormodel.dart';
@@ -47,7 +47,11 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
         final fecha = DateTime.parse(citacion['diacitacion']);
         if (_events[fecha] == null) _events[fecha] = [];
 
-        // Asegúrate de que `aprendiz` y `responsable` sean int extrayendo el primer elemento de la lista
+        // Agregar actarealizada a cada citación
+        final actarealizada = citacion[
+            'actarealizada']; // Suponiendo que actarealizada es un campo booleano en la citación.
+
+        // Asegúrate de que aprendiz y responsable sean int extrayendo el primer elemento de la lista
         final aprendizIds =
             citacion['solicitud_data']['aprendiz'] as List<dynamic>;
         final responsableIds =
@@ -66,6 +70,8 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
                   '${aprendiz.nombres} ${aprendiz.apellidos}';
               citacion['solicitud_data']['responsable'] =
                   '${responsable.nombres} ${responsable.apellidos}';
+              citacion['actarealizada'] =
+                  actarealizada; // Almacenar el estado de actarealizada
               _events[fecha]!.add(citacion);
             });
           } catch (e) {
@@ -186,38 +192,39 @@ class _CalendarioCitacionesState extends State<CalendarioCitaciones> {
               ),
             ),
             LayoutBuilder(
-  builder: (context, constraints) {
-    final eventsForSelectedDay = _getEventsForDay(_selectedDay ?? _focusedDay);
+              builder: (context, constraints) {
+                final eventsForSelectedDay =
+                    _getEventsForDay(_selectedDay ?? _focusedDay);
 
-    if (eventsForSelectedDay.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Text(
-          'No hay eventos para este día',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey,
-          ),
-        ),
-      );
-    }
+                if (eventsForSelectedDay.isEmpty) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      'No hay eventos para este día',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  );
+                }
 
-    return Wrap(
-      alignment: WrapAlignment.start,
-      spacing: 10.0,
-      runSpacing: 10.0,
-      children: eventsForSelectedDay
-          .map((event) => SizedBox(
-                width: constraints.maxWidth > 600
-                    ? 300
-                    : constraints.maxWidth * 0.9,
-                child: CitacionTile(citacion: event),
-              ))
-          .toList(),
-    );
-  },
-),
+                return Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: 10.0,
+                  runSpacing: 10.0,
+                  children: eventsForSelectedDay
+                      .map((event) => SizedBox(
+                            width: constraints.maxWidth > 600
+                                ? 300
+                                : constraints.maxWidth * 0.9,
+                            child: CitacionTile(citacion: event),
+                          ))
+                      .toList(),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -266,33 +273,18 @@ class CitacionTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Hora inicio: ${citacion['horainicio']}',
-                style: const TextStyle(color: Colors.black),
-              ),
-              Text(
-                'Hora fin: ${citacion['horafin']}',
-                style: const TextStyle(color: Colors.black),
-              ),
-              Text(
-                'Aprendiz: ${citacion['solicitud_data']['aprendiz']}',
-                style: const TextStyle(color: Colors.black),
-              ),
-              Text(
-                'Instructor: ${citacion['solicitud_data']['responsable']}',
-                style: const TextStyle(color: Colors.black),
-              ),
-              Text(
-                'Descripción: ${citacion['solicitud_data']['descripcion']}',
-                style: const TextStyle(color: Colors.black),
-              ),
+              Text('Hora inicio: ${citacion['horainicio']}'),
+              Text('Hora fin: ${citacion['horafin']}'),
+              Text('Aprendiz: ${citacion['solicitud_data']['aprendiz']}'),
+              Text('Instructor: ${citacion['solicitud_data']['responsable']}'),
+              Text('Descripción: ${citacion['solicitud_data']['descripcion']}'),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // Acción para aplazar
+                      _showEditDialog(context, citacion);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
@@ -300,39 +292,52 @@ class CitacionTile extends StatelessWidget {
                     child: const Text('Aplazar'),
                   ),
                   const SizedBox(width: 10),
-                 ElevatedButton(
+                  // Aquí se decide qué botón mostrar según actarealizada
+                  ElevatedButton(
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            content: SingleChildScrollView(
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: MediaQuery.of(context).size.width * 0.9,
-                                  maxHeight: MediaQuery.of(context).size.height * 0.8,
+                      if (citacion['actarealizada']) {
+                        // Si actarealizada es true, mostrar "Acta a PDF"
+                        _generatePdf(
+                            citacion); // Suponiendo que tienes una función para generar el PDF
+                      } else {
+                        // Si actarealizada es false, mostrar "Acta"
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              content: SingleChildScrollView(
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth:
+                                        MediaQuery.of(context).size.width * 0.9,
+                                    maxHeight:
+                                        MediaQuery.of(context).size.height *
+                                            0.8,
+                                  ),
+                                  child: ActaForm(citacionId: citacion['id']),
                                 ),
-                                child: ActaForm(citacionId: citacion['id']),
                               ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text("Cerrar"),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text("Cerrar"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: citacion['actarealizada']
+                          ? Colors.blue
+                          : Colors.green, // Cambia el color según actarealizada
                     ),
-                    child: const Text('Acta'),
-                  )
+                    child: Text(citacion['actarealizada'] ? 'PDF' : 'Acta'),
+                  ),
                 ],
               ),
             ],
@@ -346,5 +351,216 @@ class CitacionTile extends StatelessWidget {
     final lugar = citacion['lugarcitacion'];
     final enlace = citacion['enlacecitacion'];
     return lugar == 'No aplica' ? 'Enlace: $enlace' : 'Lugar: $lugar';
+  }
+
+  void _generatePdf(Map<String, dynamic> citacion) {
+    // Aquí implementas la lógica para generar el PDF con los datos de la citación
+    print('Generando PDF para la citación: ${citacion['id']}');
+  }
+
+  // Función para mostrar el cuadro de diálogo de edición
+  void _showEditDialog(BuildContext context, Map<String, dynamic> citacion) {
+    TextEditingController horainicioController =
+        TextEditingController(text: citacion['horainicio']);
+    TextEditingController horafinController =
+        TextEditingController(text: citacion['horafin']);
+    TextEditingController enlacecitacionController =
+        TextEditingController(text: citacion['enlacecitacion']);
+    TextEditingController lugarcitacionController =
+        TextEditingController(text: citacion['lugarcitacion']);
+    DateTime selectedDate = DateTime.parse(citacion['diacitacion']);
+    bool isVirtual = citacion['lugarcitacion'] == 'No aplica';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Editar Citación'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Seleccionar la fecha de citación
+                ListTile(
+                  title: const Text('Fecha de citación'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.calendar_today),
+                    onPressed: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: selectedDate,
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                      );
+                      if (pickedDate != null && pickedDate != selectedDate) {
+                        selectedDate = pickedDate;
+                      }
+                    },
+                  ),
+                ),
+                Text('Fecha seleccionada: ${selectedDate.toLocal()}'),
+
+                // Hora de inicio
+                ListTile(
+                  title: const Text('Hora de inicio'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.access_time),
+                    onPressed: () async {
+                      TimeOfDay? pickedTime = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.fromDateTime(
+                            DateTime.parse(citacion['horainicio'])),
+                      );
+                      if (pickedTime != null) {
+                        horainicioController.text = pickedTime.format(context);
+                      }
+                    },
+                  ),
+                ),
+                TextField(
+                  controller: horainicioController,
+                  decoration: const InputDecoration(
+                    labelText: 'Hora de inicio',
+                    hintText: 'HH:mm',
+                  ),
+                  keyboardType: TextInputType.datetime,
+                ),
+
+                // Hora de fin
+                ListTile(
+                  title: const Text('Hora de fin'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.access_time),
+                    onPressed: () async {
+                      TimeOfDay? pickedTime = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.fromDateTime(
+                            DateTime.parse(citacion['horafin'])),
+                      );
+                      if (pickedTime != null) {
+                        horafinController.text = pickedTime.format(context);
+                      }
+                    },
+                  ),
+                ),
+                TextField(
+                  controller: horafinController,
+                  decoration: const InputDecoration(
+                    labelText: 'Hora de fin',
+                    hintText: 'HH:mm',
+                  ),
+                  keyboardType: TextInputType.datetime,
+                ),
+
+                // Opciones de cita: presencial o virtual
+                ListTile(
+                  title: const Text('Tipo de citación'),
+                  trailing: DropdownButton<bool>(
+                    value: isVirtual,
+                    items: const [
+                      DropdownMenuItem(
+                        value: true,
+                        child: Text('Virtual'),
+                      ),
+                      DropdownMenuItem(
+                        value: false,
+                        child: Text('Presencial'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      isVirtual = value!;
+                      if (isVirtual) {
+                        lugarcitacionController.text = 'No aplica';
+                      } else {
+                        enlacecitacionController.text = '';
+                      }
+                    },
+                  ),
+                ),
+
+                // Campo de lugarcitacion si es presencial
+                if (!isVirtual)
+                  TextField(
+                    controller: lugarcitacionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Lugar de citación',
+                    ),
+                  ),
+
+                // Campo de enlacecitacion si es virtual
+                if (isVirtual)
+                  TextField(
+                    controller: enlacecitacionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Enlace de citación',
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Actualizar citación
+                _updateCitacion(
+                  citacion['id'],
+                  selectedDate,
+                  horainicioController.text,
+                  horafinController.text,
+                  lugarcitacionController.text,
+                  enlacecitacionController.text,
+                );
+                Navigator.of(context).pop();
+              },
+              child: const Text('Guardar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancelar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Función para actualizar la citación en el backend
+  Future<void> _updateCitacion(
+    int citacionId,
+    DateTime diacitacion,
+    String horainicio,
+    String horafin,
+    String lugarcitacion,
+    String enlacecitacion,
+  ) async {
+    // Verifica si la citación es virtual o presencial y ajusta el payload
+    final Map<String, dynamic> body = {
+      'diacitacion': diacitacion.toIso8601String(),
+      'horainicio': horainicio,
+      'horafin': horafin,
+      'lugarcitacion': lugarcitacion.isNotEmpty ? lugarcitacion : 'No aplica',
+      'enlacecitacion': enlacecitacion.isNotEmpty ? enlacecitacion : '',
+    };
+
+    // Realizar la petición PATCH
+    final response = await http.patch(
+      Uri.parse('http://127.0.0.1:8000/api/Citacion/$citacionId/'),
+      headers: {
+        'Content-Type':
+            'application/json', // Asegúrate de que el backend acepte JSON
+      },
+      body: json.encode(body),
+    );
+
+    if (response.statusCode == 200) {
+      print('Citación actualizada con éxito');
+    } else {
+      print('Error al actualizar la citación: ${response.statusCode}');
+      print('Respuesta: ${response.body}');
+    }
   }
 }

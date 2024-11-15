@@ -47,7 +47,7 @@ class _SolicitudesCoordinacionState extends State<SolicitudesCoordinacion> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              'Solicitudes de Instructores en Coordinación $coordinacionActual',
+              'Solicitudes Coordinación $coordinacionActual',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
@@ -534,7 +534,7 @@ Widget _buildGrid(List<SolicitudModel> solicitudes) {
                               child: _buildCardContent(solicitud, nombresAprendices, reglamentos),
                             );
                           } else {
-                            selectedCardStyle = CardStyle.buildCard(
+                            selectedCardStyle = CardLeve.buildCard(
                               onTap: () {},
                               child: _buildCardContent(solicitud, nombresAprendices, reglamentos),
                             );
