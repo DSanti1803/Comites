@@ -25,7 +25,7 @@ Este proyecto es una aplicación para el seguimiento de los comités de acuerdo 
 
 1. **Clona el repositorio**:
    ```bash
-   git clone https://github.com/usuario/proyecto.git
+   git clone https://github.com/DSanti1803/Comites
    cd proyecto/backend
    ```
 
