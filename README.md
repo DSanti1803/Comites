@@ -106,8 +106,12 @@ Si deseas contribuir al proyecto, por favor sigue estos pasos:
 4. Envía un pull request.
 
 ## Versiones
-Flutter: 3.22.3
-Dart: 3.4.4
-Python: 3.12.5
-Django: 5.1.1
-Postgres: 16.4
+1. Flutter: 3.22.3
+2. Dart: 3.4.4
+3. Python: 3.12.5
+4. Django: 5.1.1
+5. Postgres: 16.4
+
+
+##Documentación 
+En el siguiente link podrán descargar los documentos de PDF oficiales del sena para su respectiva clonación mediante codigo, además de que podrán encontrar la documentación técnica del aplicativo.
