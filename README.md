@@ -113,5 +113,5 @@ Si deseas contribuir al proyecto, por favor sigue estos pasos:
 5. Postgres: 16.4
 
 
-##Documentación 
+## Documentación 
 En el siguiente link podrán descargar los documentos de PDF oficiales del sena para su respectiva clonación mediante codigo, además de que podrán encontrar la documentación técnica del aplicativo.
