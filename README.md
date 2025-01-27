@@ -115,3 +115,4 @@ Si deseas contribuir al proyecto, por favor sigue estos pasos:
 
 ## Documentación 
 En el siguiente link podrán descargar los documentos de PDF oficiales del sena para su respectiva clonación mediante codigo, además de que podrán encontrar la documentación técnica del aplicativo.
+https://drive.google.com/drive/folders/1vYQIQg7ssPZ37pcq0ludBxgvhse7-zc_?usp=drive_link
