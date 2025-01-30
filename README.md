@@ -98,19 +98,21 @@ Abre CMD y ejecuta las siguientes líneas de código
 
 -pip install -r requirements.txt
  
-5. **Realizar Migraciones **
+5. **Realizar Migraciones**
 
 -python manage.py makemigrations 
 -python manage.py migrate
 
-6. **Enviar Datos de Prueba **
+6. **Enviar Datos de Prueba**
+   
 Los datos tanto de los aprendices como los de instructores son datos ficticios para realizar pruebas de funcionalidades. Los datos de los reglamentos son reales y están sacados del reglamento del aprendiz oficial establecido por el Sena
 -python enviaraprendices.py 
 -python enviarreglamentos.py 
 -python enviarinstructores.py 
 
 
-7. **Iniciar Servidor **
+7. **Iniciar Servidor**
+   
 -python manage.py runserver
 
 
