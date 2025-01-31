@@ -87,7 +87,8 @@ En SQL Shell (Software incluido en la instalación de PostgreSQL) ejecutar la si
 
 Abre CMD y ejecuta las siguientes líneas de código
  
--Git clone https://github.com/DSanti1803/Comites/tree/main/api_comites/app_comites
+ - Git clone https://github.com/DSanti1803/Comites/tree/main/api_comites/app_comites
+   
 3. **Crear y Activar el Entorno Virtual**
 
 -python -m venv venv 
@@ -96,24 +97,24 @@ Abre CMD y ejecuta las siguientes líneas de código
 
 4. **Instalar las Dependencias** 
 
--pip install -r requirements.txt
+ - pip install -r requirements.txt
  
 5. **Realizar Migraciones**
 
--python manage.py makemigrations 
--python manage.py migrate
+ - python manage.py makemigrations 
+ - python manage.py migrate
 
 6. **Enviar Datos de Prueba**
    
 Los datos tanto de los aprendices como los de instructores son datos ficticios para realizar pruebas de funcionalidades. Los datos de los reglamentos son reales y están sacados del reglamento del aprendiz oficial establecido por el Sena
--python enviaraprendices.py 
--python enviarreglamentos.py 
--python enviarinstructores.py 
+ - python enviaraprendices.py 
+ - python enviarreglamentos.py 
+ - python enviarinstructores.py 
 
 
 7. **Iniciar Servidor**
    
--python manage.py runserver
+ - python manage.py runserver
 
 
 
@@ -127,7 +128,7 @@ Asegúrate de que la configuración de la API en app_comites/settings.py coincid
 
 Por último, clona el frontend con uso de CMD, y abrelo en Visual Studio Code
 
--Git clone https://github.com/DSanti1803/Comites/tree/main/comites
+ -Git clone https://github.com/DSanti1803/Comites/tree/main/comites
 
  ### Ejecutar el Proyecto en Visual Studio Code
 1.	Abre el proyecto clonado en Visual Studio Code.
