@@ -91,8 +91,8 @@ Abre CMD y ejecuta las siguientes líneas de código
    
 3. **Crear y Activar el Entorno Virtual**
 
--python -m venv venv 
--source venv/bin/activate
+ - python -m venv venv 
+ - source venv/bin/activate
 
 
 4. **Instalar las Dependencias** 
