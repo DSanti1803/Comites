@@ -12,7 +12,7 @@
 
 * [Requisitos previos](#Requisitos-previos)
 
-* [Instalacion](#Instalacion)
+* [Instalación](#Instalacion)
 
 * [Configuracion de la API](#Configuracion-de-la-API)
 
@@ -29,7 +29,7 @@
 
 
 
-## Descripcion del proyecto
+## Descripción del proyecto
 
 Este proyecto es una aplicación para el seguimiento de los comités de acuerdo con el reglamento del aprendiz, permitiendo gestionar el proceso desde el llamado de atención a los aprendices hasta el comité general o decisión tomada por este. La aplicación tiene funcionalidades clave como la emisión de llamados de atención, solicitudes a los grupos ejecutores y al comité general, y el seguimiento de las etapas correspondientes para que no se salte el conducto regular o la escalabilidad de cada caso de los aprendices.
 El sistema permite que los interesados de cada caso en específico puedan tener un conocimiento del progreso en tiempo real y así poder tomar las medidas correspondientes ya que no va a existir ningún procedimiento que se realice fuera del aplicativo.
@@ -39,7 +39,7 @@ Todos los usuarios del aplicativo sin importar el rol que cumplan tienen un hist
 
 
 
-## Caracteristicas
+## Características del proyecto
 
 - **Agilización de Solicitudes y llamados de atención** 
  Facilita y acelera los procesos de llamados de atención y de solicitudes tanto de comité de equipo ejecutor como los de comité general, permitiendo tener más orden a la hora de gestionar un proceso.
@@ -117,7 +117,7 @@ Los datos tanto de los aprendices como los de instructores son datos ficticios p
 
 
 
-## Configuracion del API
+## Configuracion de la API
 
 Asegúrate de que la configuración de la API en app_comites/settings.py coincide con la información que configuraste al instalar PostgreSQL, esta configuración se encuentra en las líneas 99-108, donde se deberá verificar lo siguiente: Nombre BD, usuario, contraseña, host y puerto.
 
