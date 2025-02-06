@@ -7,7 +7,6 @@ Antes de instalar y ejecutar el backend, asegúrate de tener los siguientes requ
 - **Python 3.12.5**
 - **Django 5.1.1**
 - **PostgreSQL 16**
-- **Virtualenv** (Opcional, pero recomendado)
 
 ## Instalación
 
